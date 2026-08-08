@@ -107,13 +107,34 @@
     await loadInquiries();
   };
 
-  const createInquiryListItem = inquiry => {
+    const createInquiryListItem = inquiry => {
     const item = document.createElement('article');
     item.className = 'rounded-lg border border-gray-200 p-4';
+
+    const header = document.createElement('div');
+    header.className = 'flex items-start justify-between gap-2';
 
     const heading = document.createElement('p');
     heading.className = 'text-sm font-extrabold text-ink';
     heading.textContent = inquiry.name;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'grid h-7 w-7 shrink-0 place-items-center rounded-md border border-red-200 text-red-600 hover:bg-red-50';
+    deleteBtn.type = 'button';
+    deleteBtn.setAttribute('aria-label', 'Delete inquiry');
+    deleteBtn.innerHTML = '<i data-lucide="x" class="h-3.5 w-3.5"></i>';
+    deleteBtn.addEventListener('click', async () => {
+      if (!window.confirm('Delete this inquiry?')) return;
+      inquiriesStatus.textContent = 'Deleting...';
+      try {
+        await api.deleteInquiry(inquiry.id);
+        await loadInquiries();
+      } catch (error) {
+        inquiriesStatus.textContent = error.message || 'Unable to delete.';
+      }
+    });
+
+    header.append(heading, deleteBtn);
 
     const meta = document.createElement('p');
     meta.className = 'mt-1 text-xs font-semibold text-gray-500';
@@ -127,7 +148,7 @@
     created.className = 'mt-3 text-xs text-gray-500';
     created.textContent = new Date(inquiry.created_at).toLocaleString();
 
-    item.append(heading, meta, message, created);
+    item.append(header, meta, message, created);
     return item;
   };
 
@@ -347,6 +368,17 @@
     recoveryForm.reset();
     recoveryStatus.textContent = 'Password updated.';
     await requireAdmin(data.user);
+  });
+
+  document.getElementById('deleteAllInquiriesButton').addEventListener('click', async () => {
+    if (!window.confirm('Delete ALL inquiries? This cannot be undone.')) return;
+    inquiriesStatus.textContent = 'Deleting all inquiries...';
+    try {
+      await api.deleteAllInquiries();
+      await loadInquiries();
+    } catch (error) {
+      inquiriesStatus.textContent = error.message || 'Unable to delete inquiries.';
+    }
   });
 
   document.getElementById('signOutButton').addEventListener('click', async () => {
