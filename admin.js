@@ -20,6 +20,9 @@
   const postsStatus = document.getElementById('postsStatus');
   const postsList = document.getElementById('postsList');
   const postCount = document.getElementById('postCount');
+  const inquiriesList = document.getElementById('inquiriesList');
+  const inquiriesStatus = document.getElementById('inquiriesStatus');
+  const inquiryCount = document.getElementById('inquiryCount');
   const imageInput = document.getElementById('imageInput');
   const imagePreview = document.getElementById('imagePreview');
   const imageEmpty = document.getElementById('imageEmpty');
@@ -101,6 +104,46 @@
     window.lucide?.createIcons();
     resetEditor();
     await loadPosts();
+    await loadInquiries();
+  };
+
+  const createInquiryListItem = inquiry => {
+    const item = document.createElement('article');
+    item.className = 'rounded-lg border border-gray-200 p-4';
+
+    const heading = document.createElement('p');
+    heading.className = 'text-sm font-extrabold text-ink';
+    heading.textContent = inquiry.name;
+
+    const meta = document.createElement('p');
+    meta.className = 'mt-1 text-xs font-semibold text-gray-500';
+    meta.textContent = `${inquiry.email}${inquiry.phone ? ` · ${inquiry.phone}` : ''}`;
+
+    const message = document.createElement('p');
+    message.className = 'mt-2 text-sm leading-6 text-gray-600';
+    message.textContent = inquiry.message;
+
+    const created = document.createElement('p');
+    created.className = 'mt-3 text-xs text-gray-500';
+    created.textContent = new Date(inquiry.created_at).toLocaleString();
+
+    item.append(heading, meta, message, created);
+    return item;
+  };
+
+  const loadInquiries = async () => {
+    if (!inquiriesList || !inquiriesStatus || !inquiryCount) return;
+    inquiriesStatus.textContent = 'Loading inquiries...';
+    try {
+      const inquiries = await api.fetchInquiries();
+      inquiryCount.textContent = String(inquiries.length);
+      inquiriesStatus.textContent = inquiries.length ? '' : 'No inquiries yet.';
+      const fragment = document.createDocumentFragment();
+      inquiries.slice(0, 20).forEach(inquiry => fragment.append(createInquiryListItem(inquiry)));
+      inquiriesList.replaceChildren(fragment);
+    } catch (error) {
+      inquiriesStatus.textContent = error.message || 'Unable to load inquiries.';
+    }
   };
 
   const verifyAdmin = async () => {
@@ -217,6 +260,7 @@
     }
     if (document.getElementById('postId').value === id) resetEditor();
     await loadPosts();
+    await loadInquiries();
   };
 
   loginForm.addEventListener('submit', async event => {
@@ -367,6 +411,7 @@
       resetEditor();
       editorStatus.textContent = 'Post saved.';
       await loadPosts();
+      await loadInquiries();
     } catch (error) {
       editorStatus.textContent = error.message || 'Unable to save the post.';
     }
