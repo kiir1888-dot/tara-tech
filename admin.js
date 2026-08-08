@@ -417,6 +417,19 @@
     }
   });
 
+  // Password visibility toggles
+  document.querySelectorAll('[data-toggle]').forEach(button => {
+    button.addEventListener('click', () => {
+      const input = document.getElementById(button.dataset.toggle);
+      if (!input) return;
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+      button.innerHTML = `<i data-lucide="${isPassword ? 'eye-off' : 'eye'}" class="h-4 w-4 text-gray-500"></i>`;
+      window.lucide?.createIcons();
+    });
+  });
+
   window.addEventListener('pagehide', clearPreviewUrl, { once: true });
 
   const initialize = async () => {
