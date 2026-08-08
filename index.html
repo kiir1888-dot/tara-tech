@@ -470,9 +470,25 @@
         const message = `Project: ${data.get('type')}\nBudget: ${data.get('budget')}\n\n${data.get('message')}`;
         status.textContent = 'Sending inquiry...';
         try {
-          await window.TaraSupabaseAPI.submitInquiry(
-            data.get('name'), data.get('email'), data.get('phone'), message
-          );
+          const web3Payload = new FormData();
+          web3Payload.append('access_key', 'd2ce3577-e324-4ee4-ac6f-4bcebed69863');
+          web3Payload.append('name', data.get('name'));
+          web3Payload.append('email', data.get('email'));
+          web3Payload.append('phone', data.get('phone'));
+          web3Payload.append('message', message);
+          web3Payload.append('subject', 'New Inquiry from ' + data.get('name'));
+          const web3Response = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: web3Payload
+          });
+          if (!web3Response.ok) throw new Error('Email delivery failed. Please try again.');
+          const web3Result = await web3Response.json();
+          if (web3Result.success !== true) throw new Error(web3Result.message || 'Email delivery failed.');
+          if (window.TaraSupabaseAPI?.configured) {
+            await window.TaraSupabaseAPI.submitInquiry(
+              data.get('name'), data.get('email'), data.get('phone'), message
+            );
+          }
           form.reset();
           status.textContent = 'Thanks. Your inquiry has been received.';
         } catch (error) {
