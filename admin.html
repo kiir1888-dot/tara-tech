@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Tara Tech Content Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        fontSize: {
+          xs: ['0.7rem', { lineHeight: '1rem' }], sm: ['0.8125rem', { lineHeight: '1.25rem' }], base: ['0.9375rem', { lineHeight: '1.5rem' }],
+          lg: ['1.05rem', { lineHeight: '1.6rem' }], xl: ['1.125rem', { lineHeight: '1.65rem' }], '2xl': ['1.3125rem', { lineHeight: '1.85rem' }],
+          '3xl': ['1.625rem', { lineHeight: '2rem' }], '4xl': ['2.125rem', { lineHeight: '2.35rem' }], '5xl': ['2.625rem', { lineHeight: '1' }],
+          '6xl': ['3.25rem', { lineHeight: '1' }], '7xl': ['4rem', { lineHeight: '1' }], '8xl': ['5.25rem', { lineHeight: '1' }], '9xl': ['7rem', { lineHeight: '1' }]
+        },
+        extend: {
+          colors: { blue: { 600: '#0046FF', 700: '#0039D6', 950: '#061B54' }, yellow: { 300: '#F8A231', 400: '#F8A231' }, ink: '#111827' },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Plus Jakarta Sans", sans-serif; font-size: 0.9375rem; color: #111827; background: #f3f4f6; }
+    [hidden] { display: none !important; }
+    :focus-visible { outline: 3px solid #f8a231; outline-offset: 3px; }
+  </style>
+</head>
+<body class="min-h-screen antialiased">
+  <main>
+    <section id="loginView" class="grid min-h-screen place-items-center px-5 py-12">
+      <div class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-7 shadow-xl sm:p-9">
+        <div class="flex items-center gap-3"><span class="grid h-11 w-11 place-items-center overflow-hidden"><img class="h-full w-full scale-[2.4] object-contain" src="Tara%20Tech%20Logo-01.jpg" alt=""></span><div><strong class="block text-sm tracking-[0.12em]">Tara Tech</strong><span class="text-xs font-semibold text-gray-500">CONTENT DASHBOARD</span></div></div>
+        <h1 class="mt-9 text-2xl font-extrabold">Administrator sign in</h1>
+        <form id="loginForm" class="mt-7 grid gap-5">
+          <label class="text-xs font-bold text-gray-600">COMPANY EMAIL<input id="loginEmail" required readonly type="email" autocomplete="username" value="tara.tech211@gmail.com" class="mt-2 h-12 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 text-sm font-medium text-gray-600"></label>
+          <label class="text-xs font-bold text-gray-600">PASSWORD<input id="loginPassword" required minlength="8" type="password" autocomplete="current-password" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+          <button class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-700" type="submit">Sign in <i data-lucide="log-in" class="h-4 w-4 text-yellow-300"></i></button>
+          <div class="grid grid-cols-2 gap-3"><button id="createPasswordButton" class="rounded-lg border border-gray-300 px-3 py-3 text-sm font-bold hover:border-yellow-400 hover:bg-yellow-300" type="button">Create password</button><button id="forgotPasswordButton" class="rounded-lg border border-gray-300 px-3 py-3 text-sm font-bold hover:border-yellow-400 hover:bg-yellow-300" type="button">Forgot password</button></div>
+          <p class="text-xs leading-5 text-gray-500">First time? Enter a password of at least 8 characters, then choose Create password. A confirmation email may be required.</p>
+          <p id="loginStatus" class="text-sm font-semibold text-red-600" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="recoveryView" class="grid min-h-screen place-items-center px-5 py-12" hidden>
+      <div class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-7 shadow-xl sm:p-9">
+        <p class="text-xs font-extrabold tracking-[0.16em] text-blue-600">Tara Tech</p><h1 class="mt-3 text-2xl font-extrabold">Set a new password</h1><p class="mt-3 text-sm leading-6 text-gray-600">Choose a new password for tara.tech211@gmail.com.</p>
+        <form id="recoveryForm" class="mt-7 grid gap-5">
+          <label class="text-xs font-bold text-gray-600">NEW PASSWORD<input id="newPassword" required minlength="8" type="password" autocomplete="new-password" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+          <label class="text-xs font-bold text-gray-600">CONFIRM PASSWORD<input id="confirmPassword" required minlength="8" type="password" autocomplete="new-password" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+          <button class="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-bold text-white hover:bg-blue-700" type="submit">Update password <i data-lucide="key-round" class="h-4 w-4 text-yellow-300"></i></button>
+          <p id="recoveryStatus" class="text-sm font-semibold text-red-600" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="dashboardView" hidden>
+      <header class="border-b border-gray-200 bg-white">
+        <div class="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5 px-5 py-4 lg:px-8"><div><p class="text-xs font-extrabold tracking-[0.16em] text-blue-600">Tara Tech</p><h1 class="mt-1 text-xl font-extrabold">News &amp; Events</h1></div><button id="signOutButton" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:border-yellow-400 hover:bg-yellow-300" type="button"><i data-lucide="log-out" class="h-4 w-4"></i> Sign out</button></div>
+      </header>
+      <div class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.2fr_.8fr] lg:px-8">
+        <section class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8" aria-labelledby="editorTitle">
+          <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-extrabold tracking-[0.14em] text-blue-600">EDITOR</p><h2 id="editorTitle" class="mt-2 text-2xl font-extrabold">Create post</h2></div><button id="newPostButton" class="hidden items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button"><i data-lucide="plus" class="h-4 w-4"></i> New</button></div>
+          <form id="postForm" class="mt-7 grid gap-5 sm:grid-cols-2">
+            <input id="postId" type="hidden"><input id="existingImageUrl" type="hidden"><input id="existingImagePath" type="hidden">
+            <label class="text-xs font-bold text-gray-600">CONTENT TYPE<select id="postKind" class="mt-2 h-12 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm font-medium focus:border-blue-600"><option>News</option><option>Event</option></select></label>
+            <label class="text-xs font-bold text-gray-600">STATUS<select id="postStatus" class="mt-2 h-12 w-full rounded-lg border border-gray-300 bg-white px-4 text-sm font-medium focus:border-blue-600"><option value="draft">Draft</option><option value="published">Published</option></select></label>
+            <label class="text-xs font-bold text-gray-600 sm:col-span-2">TITLE<input id="postTitle" required maxlength="160" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600" placeholder="Post title"></label>
+            <label class="text-xs font-bold text-gray-600 sm:col-span-2">SLUG<input id="postSlug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600" placeholder="post-title"></label>
+            <label class="text-xs font-bold text-gray-600 sm:col-span-2">SHORT DESCRIPTION<textarea id="postDescription" required minlength="10" maxlength="320" rows="3" class="mt-2 w-full resize-y rounded-lg border border-gray-300 p-4 text-sm font-medium focus:border-blue-600" placeholder="Summary shown in Latest from Tara Tech"></textarea></label>
+            <label class="text-xs font-bold text-gray-600 sm:col-span-2">CONTENT<textarea id="postContent" required minlength="10" maxlength="20000" rows="9" class="mt-2 w-full resize-y rounded-lg border border-gray-300 p-4 text-sm font-medium focus:border-blue-600" placeholder="Post content"></textarea></label>
+            <label class="text-xs font-bold text-gray-600 sm:col-span-2">PUBLISH DATE<input id="publishedAt" type="datetime-local" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+            <div class="sm:col-span-2"><span class="text-xs font-bold text-gray-600">FEATURED IMAGE</span><div class="mt-2 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-5"><div id="imageEmpty" class="py-5 text-center"><i data-lucide="image-plus" class="mx-auto h-8 w-8 text-blue-600"></i><p class="mt-3 text-sm font-semibold text-gray-600">Choose an image from this device</p></div><img id="imagePreview" class="h-64 w-full rounded-lg object-cover" alt="Featured image preview" hidden><input id="imageInput" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-describedby="imageHelp imageStatus"><div class="mt-4 flex flex-wrap gap-3"><label for="imageInput" class="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-bold text-white hover:bg-blue-700"><i data-lucide="folder-open" class="h-4 w-4 text-yellow-300"></i> Browse Picture</label><button id="removeImageButton" class="hidden items-center gap-2 rounded-lg border border-gray-300 px-4 py-3 text-sm font-bold hover:bg-gray-100" type="button"><i data-lucide="trash-2" class="h-4 w-4"></i> Remove</button></div><p id="imageHelp" class="mt-3 text-xs text-gray-500">JPG, PNG, WebP or GIF, up to 5 MB.</p><p id="imageStatus" class="mt-2 text-xs font-semibold text-blue-600" role="status"></p></div></div>
+            <div class="flex flex-wrap items-center gap-3 sm:col-span-2"><button id="savePostButton" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700" type="submit"><i data-lucide="save" class="h-4 w-4 text-yellow-300"></i> Save post</button><p id="editorStatus" class="text-sm font-semibold text-blue-600" role="status"></p></div>
+          </form>
+        </section>
+
+        <aside class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8" aria-labelledby="postsTitle"><div class="flex items-end justify-between gap-4"><div><p class="text-xs font-extrabold tracking-[0.14em] text-blue-600">CONTENT</p><h2 id="postsTitle" class="mt-2 text-2xl font-extrabold">All posts</h2></div><span id="postCount" class="text-sm font-bold text-gray-500"></span></div><div id="postsList" class="mt-6 grid gap-3" aria-live="polite"></div><p id="postsStatus" class="mt-4 text-sm font-semibold text-blue-600" role="status"></p></aside>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

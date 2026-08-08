@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tara Tech builds dependable frontend and backend systems for ambitious businesses.">
+  <title>Tara Tech | Full-Stack Development Company</title>
+  <link rel="icon" type="image/jpeg" href="Tara%20Tech%20Logo-01.jpg">
+  <script>
+    const savedTheme = localStorage.getItem('tara-news-theme');
+    const useDarkTheme = savedTheme ? savedTheme === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', useDarkTheme);
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        fontSize: {
+          xs: ['0.7rem', { lineHeight: '1rem' }], sm: ['0.8125rem', { lineHeight: '1.25rem' }], base: ['0.9375rem', { lineHeight: '1.5rem' }],
+          lg: ['1.05rem', { lineHeight: '1.6rem' }], xl: ['1.125rem', { lineHeight: '1.65rem' }], '2xl': ['1.3125rem', { lineHeight: '1.85rem' }],
+          '3xl': ['1.625rem', { lineHeight: '2rem' }], '4xl': ['2.125rem', { lineHeight: '2.35rem' }], '5xl': ['2.625rem', { lineHeight: '1' }],
+          '6xl': ['3.25rem', { lineHeight: '1' }], '7xl': ['4rem', { lineHeight: '1' }], '8xl': ['5.25rem', { lineHeight: '1' }], '9xl': ['7rem', { lineHeight: '1' }]
+        },
+        extend: {
+          colors: { blue: { 600: '#0046FF', 700: '#0039D6', 950: '#061B54' }, yellow: { 300: '#F8A231', 400: '#F8A231', 500: '#F8A231' }, electric: { 50: '#eff6ff', 500: '#1677ff', 600: '#0865df', 700: '#0752b6' }, ink: '#111827' },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Plus Jakarta Sans', 'sans-serif'] },
+          boxShadow: { card: '0 18px 50px rgba(17, 24, 39, 0.08)', lift: '0 18px 45px rgba(15, 23, 42, .10)' }
+        }
+      }
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <style>
+    :root { --blue: #0046ff; --yellow: #f8a231; --ink: #111827; --line: #e5e7eb; color-scheme: light; }
+    :root.dark { --ink: #f8fafc; --line: #334155; color-scheme: dark; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: #fff; font-family: "Plus Jakarta Sans", sans-serif; font-size: 0.9375rem; }
+    a, button, input, select, textarea { outline-offset: 4px; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid var(--yellow); }
+    .page-grid { background-image: linear-gradient(#dbe3f3 1px, transparent 1px), linear-gradient(90deg, #dbe3f3 1px, transparent 1px); background-size: 42px 42px; }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ""; position: absolute; right: 0; bottom: -7px; left: 0; height: 2px; background: var(--blue); transform: scaleX(0); transform-origin: right; transition: transform 180ms ease; }
+    .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); transform-origin: left; }
+    .project-image { transition: transform 500ms cubic-bezier(.2,.7,.2,1); }
+    .project-card:hover .project-image { transform: scale(1.035); }
+    .story-card img { transition: transform 500ms ease; }
+    .story-card:hover img { transform: scale(1.045); }
+    .filter-button[aria-pressed="true"] { background: #1677ff; border-color: #1677ff; color: #fff; }
+    .line-clamp-2 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+    .line-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+    .hero-slide { position: absolute; inset: 0; opacity: 0; transform: scale(1.025); transition: opacity 900ms ease, transform 5s ease; }
+    .hero-slide.is-active { opacity: 1; transform: scale(1); }
+    .brand-logo { filter: grayscale(1); opacity: .48; transition: filter 180ms, opacity 180ms; }
+    .brand-logo:hover { filter: grayscale(0); opacity: 1; }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 600ms ease, transform 600ms ease; }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    #home .reveal { opacity: 1; transform: none; }
+    .number-outline { color: transparent; -webkit-text-stroke: 1.5px #9bb4ff; }
+    .industry-panel { margin: 0 1.25rem 1.25rem; overflow: hidden; border-radius: 0.5rem; }
+    #team article { width: 100%; max-width: 20rem; margin-inline: auto; padding: 1rem; text-align: center; }
+    #team article img { width: 12rem; height: 15rem; margin-inline: auto; object-position: center top; }
+    #team article [aria-label$="outreach links"] { width: 10rem; margin-inline: auto; justify-content: center; }
+    #team article a { width: 2rem; min-width: 2rem; height: 2rem; min-height: 2rem; border-width: 0.5px; border-radius: 0.75rem; }
+    .footer-logo { filter: url(#remove-white); }
+    .theme-logo { background: #fff !important; }
+    .mobile-menu[hidden] { display: none; }
+    .dark body { color: #f8fafc; background: #020617; }
+    .dark .page-grid { background-color: #020617; background-image: linear-gradient(#1e293b 1px, transparent 1px), linear-gradient(90deg, #1e293b 1px, transparent 1px); }
+    .dark .bg-white, .dark .bg-white\/95, .dark .bg-white\/85, .dark .bg-white\/70 { background-color: #0f172a; }
+    .dark .bg-gray-50 { background-color: #020617; }
+    .dark .bg-gray-100, .dark .bg-gray-200 { background-color: #1e293b; }
+    .dark .text-ink { color: #f8fafc; }
+    .dark .text-gray-300 { color: #94a3b8; }
+    .dark .text-gray-400, .dark .text-gray-500, .dark .text-gray-600 { color: #cbd5e1; }
+    .dark .border-gray-100, .dark .border-gray-200, .dark .border-gray-300 { border-color: #334155; }
+    .dark input, .dark select, .dark textarea { color: #f8fafc; background-color: #0f172a; border-color: #475569; }
+    .dark input::placeholder, .dark textarea::placeholder { color: #94a3b8; }
+    .dark .industry-trigger:hover, .dark #mobileMenu a:hover { color: #0f172a; }
+    .dark .theme-logo { background: #fff !important; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .reveal { opacity: 1; transform: none; transition: none; } }
+  </style>
+</head>
+<body class="overflow-x-hidden antialiased">
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 lg:px-8">
+      <a href="#home" class="flex items-center gap-3" aria-label="Tara Tech home">
+        <span class="theme-logo grid h-11 w-11 shrink-0 place-items-center overflow-hidden bg-white" aria-hidden="true"><img class="h-full w-full scale-[2.4] object-contain" src="Tara%20Tech%20Logo-01.jpg" alt=""></span>
+        <span class="leading-none"><strong class="block text-sm tracking-[0.13em]">Tara Tech</strong><small class="mt-1.5 block text-[9px] font-bold tracking-[0.14em] text-gray-500">FULL-STACK DEVELOPMENT</small></span>
+      </a>
+      <nav class="hidden items-center gap-7 text-[13px] font-semibold xl:flex" aria-label="Main navigation">
+        <a class="nav-link active" href="#home">Home</a><a class="nav-link" href="#news-events">News &amp; Events</a><a class="nav-link" href="#about">About</a><a class="nav-link" href="#services">Services</a><a class="nav-link" href="#projects">Projects</a><a class="nav-link" href="#team">Team</a><a class="nav-link" href="#process">Process</a><a class="nav-link" href="#contact">Contact</a>
+      </nav>
+      <div class="flex items-center gap-2"><a href="#contact" class="hidden items-center gap-2 rounded-full bg-blue-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700 sm:inline-flex">Start a Project <i data-lucide="arrow-up-right" class="h-4 w-4 text-yellow-300"></i></a><button id="siteThemeToggle" class="grid h-11 w-11 shrink-0 place-items-center transition hover:text-blue-600" type="button" aria-label="Switch to dark mode"><i data-lucide="moon" class="h-5 w-5"></i></button><button id="menuButton" class="grid h-11 w-11 place-items-center rounded-lg border border-gray-300 xl:hidden" type="button" aria-label="Open menu" aria-expanded="false"><i data-lucide="menu" class="h-5 w-5"></i></button></div>
+    </div>
+    <nav id="mobileMenu" class="mobile-menu border-t border-gray-200 bg-white px-5 py-5 xl:hidden" aria-label="Mobile navigation" hidden>
+      <ul class="mx-auto flex max-w-7xl flex-col text-sm font-semibold">
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#home">Home</a></li>
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#news-events">News &amp; Events</a></li>
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#about">About</a></li>
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#services">Services</a></li>
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#projects">Projects</a></li>
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#team">Team</a></li>
+        <li class="border-b border-gray-100"><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#process">Process</a></li>
+        <li><a class="block px-3 py-3.5 hover:bg-yellow-300" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="page-grid relative overflow-hidden pt-20">
+      <div class="absolute inset-0 bg-white/85"></div>
+      <div class="relative mx-auto grid min-h-[780px] max-w-7xl items-center gap-12 px-5 py-20 lg:grid-cols-[1.08fr_.92fr] lg:px-8 lg:py-24">
+        <div class="reveal">
+          <span class="inline-flex items-center rounded-lg border border-yellow-400 bg-yellow-300 px-4 py-2 text-xs font-extrabold tracking-[0.17em] text-blue-950 shadow-sm">BUILDING FOR THE WEB</span>
+          <h1 class="mt-7 whitespace-nowrap text-[clamp(2.625rem,5.25vw,4.8125rem)] font-extrabold leading-[.9] tracking-[-0.04em] text-blue-600">Tara <span class="text-ink">Tech</span></h1>
+          <p class="mt-7 text-lg font-extrabold tracking-[0.13em] text-ink sm:text-xl">FULL-STACK DEVELOPMENT COMPANY</p>
+          <p class="mt-5 max-w-xl text-base leading-8 text-gray-600 sm:text-lg">We build fast, secure digital products from polished frontend experiences to scalable backend systems and APIs.</p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <a href="#projects" class="inline-flex min-h-13 items-center gap-2 rounded-lg bg-blue-600 px-6 py-4 text-sm font-bold text-white transition hover:-translate-y-1 hover:bg-blue-700">Explore Our Work <i data-lucide="arrow-right" class="h-4 w-4 text-yellow-300"></i></a>
+            <a href="#services" class="inline-flex min-h-13 items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-4 text-sm font-bold transition hover:border-yellow-400 hover:bg-yellow-300">Our Capabilities <i data-lucide="code-2" class="h-4 w-4"></i></a>
+          </div>
+          <dl class="mt-12 grid grid-cols-2 border-y border-gray-300 bg-white/70 sm:grid-cols-4">
+            <div class="py-5 sm:border-r sm:border-gray-300"><dt class="text-3xl font-extrabold text-blue-600">100%</dt><dd class="mt-1 text-[11px] font-semibold leading-5 text-gray-500">Full-Stack<br>Delivery</dd></div>
+            <div class="border-l border-gray-300 py-5 pl-5 sm:border-l-0 sm:border-r"><dt class="text-3xl font-extrabold">24/7</dt><dd class="mt-1 text-[11px] font-semibold leading-5 text-gray-500">Reliable<br>Systems</dd></div>
+            <div class="border-t border-gray-300 py-5 sm:border-r sm:border-t-0 sm:pl-5"><dt class="text-3xl font-extrabold">API</dt><dd class="mt-1 text-[11px] font-semibold leading-5 text-gray-500">Connected<br>Products</dd></div>
+            <div class="border-l border-t border-gray-300 py-5 pl-5 sm:border-t-0"><dt class="text-3xl font-extrabold text-yellow-500">UX</dt><dd class="mt-1 text-[11px] font-semibold leading-5 text-gray-500">Responsive<br>Interfaces</dd></div>
+          </dl>
+        </div>
+        <div class="relative reveal lg:justify-self-end">
+          <div class="absolute -left-5 -top-5 h-28 w-28 bg-yellow-400"></div><div class="absolute -bottom-5 -right-5 h-36 w-28 bg-blue-600"></div>
+          <div id="heroSlider" class="relative h-[460px] w-full overflow-hidden rounded-lg border-[10px] border-white bg-gray-200 shadow-2xl sm:h-[580px] lg:w-[460px]" aria-label="Tara Tech development capabilities">
+            <img class="hero-slide is-active h-full w-full object-cover object-center" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&amp;fit=crop&amp;w=1200&amp;q=88" alt="Full-stack development workspace at Tara Tech">
+            <img class="hero-slide h-full w-full object-cover object-center" src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&amp;fit=crop&amp;w=1200&amp;q=88" alt="Application code developed by Tara Tech">
+            <img class="hero-slide h-full w-full object-cover object-center" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&amp;fit=crop&amp;w=1200&amp;q=88" alt="Business analytics dashboard built for digital growth">
+            <div class="absolute bottom-5 left-1/2 flex w-fit -translate-x-1/2 items-center gap-3 whitespace-nowrap rounded-lg bg-white px-4 py-3 shadow-card"><span class="relative flex h-3 w-3"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-yellow-400 opacity-75"></span><span class="relative h-3 w-3 rounded-full bg-yellow-500"></span></span><span class="text-xs font-bold">FRONTEND + BACKEND, ONE TEAM</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="news-events" class="scroll-mt-20 border-b border-gray-200 bg-white">
+      <div class="border-b border-slate-200 py-8 dark:border-slate-800 sm:py-12">
+        <div class="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
+          <div class="mb-7 flex items-end justify-between gap-6"><div><p class="text-xs font-bold tracking-[0.18em] text-electric-600">Tara Tech Dispatch</p><h2 class="mt-2 font-display text-3xl font-extrabold sm:text-4xl">News &amp; Events</h2></div><p class="hidden max-w-md text-right text-sm leading-6 text-slate-500 md:block dark:text-slate-400">Signals, ideas and gatherings shaping technology and business across our community.</p></div>
+          <div id="heroGrid" class="grid min-h-[530px] gap-4 lg:grid-cols-[1.55fr_.85fr]" aria-label="Featured stories"></div>
+        </div>
+      </div>
+
+      <div class="mx-auto grid max-w-[1440px] gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:px-8 lg:py-20 xl:gap-16">
+        <div class="min-w-0">
+          <section id="news" class="scroll-mt-28" aria-labelledby="newsHeading">
+            <div class="flex flex-col justify-between gap-5 border-b border-slate-200 pb-6 dark:border-slate-800 sm:flex-row sm:items-end">
+              <div><p class="text-xs font-bold uppercase tracking-[0.18em] text-electric-600">The latest</p><h2 id="newsHeading" class="mt-2 font-display text-3xl font-extrabold">Newsroom</h2></div><div id="categoryFilters" class="flex flex-wrap gap-2" aria-label="Filter news by category"></div>
+            </div>
+            <p id="searchSummary" class="mt-5 text-sm font-semibold text-slate-500 dark:text-slate-400" aria-live="polite"></p>
+            <div id="newsGrid" class="mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3"></div>
+            <div id="noResults" class="mt-7 rounded-lg border border-dashed border-slate-300 bg-white px-6 py-14 text-center dark:border-slate-700 dark:bg-slate-900" hidden><i data-lucide="search-x" class="mx-auto h-8 w-8 text-electric-500"></i><h3 class="mt-4 font-display text-lg font-bold">No matching stories</h3><p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Try another keyword or category.</p></div>
+          </section>
+
+          <section id="events" class="scroll-mt-28 pt-20" aria-labelledby="eventsHeading">
+            <div class="border-b border-slate-200 pb-6 dark:border-slate-800"><p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-400">Save the date</p><h2 id="eventsHeading" class="mt-2 font-display text-3xl font-extrabold">Upcoming Events</h2></div><div id="eventsList" class="mt-7 grid gap-4"></div>
+          </section>
+        </div>
+
+        <aside class="space-y-8 lg:sticky lg:top-28 lg:self-start" aria-label="News extras">
+          <section class="rounded-lg bg-electric-600 p-6 text-white shadow-lift"><i data-lucide="mail" class="h-7 w-7 text-blue-100"></i><h2 class="mt-5 font-display text-2xl font-extrabold">The briefing, weekly.</h2><p class="mt-3 text-sm leading-6 text-blue-100">Tara Tech insights and event invitations, delivered without the noise.</p><form id="newsletterForm" class="mt-6 grid gap-3"><label><span class="sr-only">Email address</span><input id="newsletterEmail" required type="email" autocomplete="email" class="h-12 w-full rounded-lg border border-white/20 bg-white px-4 text-sm font-semibold text-slate-950 outline-none focus:ring-2 focus:ring-amber-300" placeholder="Email address"></label><button class="h-12 rounded-lg bg-slate-950 px-5 text-sm font-bold text-white transition hover:bg-amber-300 hover:text-slate-950" type="submit">Join the newsletter</button><p id="newsletterStatus" class="min-h-5 text-xs font-semibold text-blue-100" role="status"></p></form></section>
+          <section class="rounded-lg border border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-900"><div class="flex items-center justify-between"><h2 class="font-display text-xl font-extrabold">Most Popular</h2><i data-lucide="trending-up" class="h-5 w-5 text-electric-500"></i></div><ol id="popularList" class="mt-5 divide-y divide-slate-200 dark:divide-slate-800"></ol></section>
+          <section class="overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-6 text-white dark:border-slate-800"><p class="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">Have a story?</p><h2 class="mt-3 font-display text-xl font-extrabold">Share news with our editorial team.</h2><a href="mailto:tara.tech211@gmail.com?subject=News%20tip%20for%20Tara%20Tech" class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-white hover:text-emerald-300">Send a news tip <i data-lucide="arrow-up-right" class="h-4 w-4"></i></a></section>
+        </aside>
+      </div>
+    </section>
+
+    <section id="projects" class="bg-gray-50 py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="mb-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><p class="text-[10px] font-extrabold tracking-[0.18em] text-blue-600">FULL-STACK SOLUTIONS</p><h2 class="mt-2 text-3xl font-extrabold tracking-tight sm:text-4xl">Products We Build</h2></div><a href="#contact" class="inline-flex items-center gap-2 text-xs font-bold text-blue-600">Build With Us <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i></a></div>
+        <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          <article class="project-card reveal overflow-hidden rounded-lg border border-gray-200 bg-white shadow-card"><div class="h-40 overflow-hidden bg-[#dce8ff]"><img class="project-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=85" alt="Analytics dashboard displayed on a laptop"></div><div class="flex items-end justify-between gap-3 p-4"><div><p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">React + Node.js Platform</p><h3 class="mt-1.5 text-lg font-extrabold">FinTrack Dashboard</h3></div><a href="#contact" aria-label="Discuss a dashboard project" class="grid h-9 w-9 shrink-0 place-items-center bg-yellow-400 hover:bg-yellow-300"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></a></div></article>
+          <article class="project-card reveal overflow-hidden rounded-lg border border-gray-200 bg-white shadow-card"><div class="h-40 overflow-hidden bg-[#fff0c8]"><img class="project-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1200&q=85" alt="Tara Interiors modern interior website"></div><div class="flex items-end justify-between gap-3 p-4"><div><p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">CMS + Business Website</p><h3 class="mt-1.5 text-lg font-extrabold">Tara Interiors</h3></div><a href="#contact" aria-label="Discuss a business website" class="grid h-9 w-9 shrink-0 place-items-center bg-yellow-400 hover:bg-yellow-300"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></a></div></article>
+          <article class="project-card reveal overflow-hidden rounded-lg border border-gray-200 bg-white shadow-card"><div class="h-40 overflow-hidden bg-[#c9f7ee]"><img class="project-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=85" alt="Fitness app workout experience"></div><div class="flex items-end justify-between gap-3 p-4"><div><p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Mobile App + REST API</p><h3 class="mt-1.5 text-lg font-extrabold">MoveFit App</h3></div><a href="#contact" aria-label="Discuss a mobile application" class="grid h-9 w-9 shrink-0 place-items-center bg-yellow-400 hover:bg-yellow-300"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></a></div></article>
+          <article class="project-card reveal overflow-hidden rounded-lg border border-gray-200 bg-white shadow-card"><div class="h-40 overflow-hidden bg-[#f1dfff]"><img class="project-image h-full w-full object-cover" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=85" alt="Tara Commerce shopping experience on a phone"></div><div class="flex items-end justify-between gap-3 p-4"><div><p class="text-[10px] font-bold uppercase tracking-wider text-blue-600">E-Commerce + Payments</p><h3 class="mt-1.5 text-lg font-extrabold">Tara Commerce</h3></div><a href="#contact" aria-label="Discuss an e-commerce platform" class="grid h-9 w-9 shrink-0 place-items-center bg-yellow-400 hover:bg-yellow-300"><i data-lucide="arrow-up-right" class="h-4 w-4"></i></a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><p class="text-xs font-extrabold tracking-[0.2em] text-blue-600">WHAT WE DO</p><h2 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl">Full-Stack Services</h2>
+        <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div class="group min-h-56 overflow-hidden rounded-lg border border-gray-200 p-7 transition hover:bg-blue-600 hover:text-white"><i data-lucide="layout-template" class="h-9 w-9 text-blue-600 group-hover:text-yellow-300"></i><h3 class="mt-16 text-lg font-bold">Frontend<br>Development</h3></div>
+          <div class="group min-h-56 overflow-hidden rounded-lg border border-gray-200 p-7 transition hover:bg-blue-600 hover:text-white"><i data-lucide="server-cog" class="h-9 w-9 text-blue-600 group-hover:text-yellow-300"></i><h3 class="mt-16 text-lg font-bold">Backend<br>Development</h3></div>
+          <div class="group min-h-56 overflow-hidden rounded-lg border border-gray-200 p-7 transition hover:bg-blue-600 hover:text-white"><i data-lucide="database" class="h-9 w-9 text-blue-600 group-hover:text-yellow-300"></i><h3 class="mt-16 text-lg font-bold">Databases<br>&amp; APIs</h3></div>
+          <div class="group min-h-56 overflow-hidden rounded-lg border border-gray-200 p-7 transition hover:bg-blue-600 hover:text-white"><i data-lucide="shopping-cart" class="h-9 w-9 text-blue-600 group-hover:text-yellow-300"></i><h3 class="mt-16 text-lg font-bold">E-Commerce<br>Solutions</h3></div>
+          <div class="group min-h-56 overflow-hidden rounded-lg border border-gray-200 p-7 transition hover:bg-blue-600 hover:text-white"><i data-lucide="cloud-cog" class="h-9 w-9 text-blue-600 group-hover:text-yellow-300"></i><h3 class="mt-16 text-lg font-bold">Deployment<br>&amp; Support</h3></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-gray-200 bg-gray-50 py-20">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><div class="text-center"><p class="text-xs font-extrabold tracking-[0.2em] text-blue-600">OUR TECHNOLOGY STACK</p><h2 class="mt-3 text-3xl font-extrabold sm:text-4xl">Tools We Build With</h2></div>
+        <div class="mt-12 grid grid-cols-3 gap-px overflow-hidden border border-gray-200 bg-gray-200 sm:grid-cols-5 lg:grid-cols-9">
+          <div class="bg-white p-5 text-center"><strong class="text-lg text-[#61dafb]">R</strong><span class="mt-2 block text-[11px] font-bold">React</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-black">N</strong><span class="mt-2 block text-[11px] font-bold">Next.js</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#339933]">JS</strong><span class="mt-2 block text-[11px] font-bold">Node.js</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#3776ab]">Py</strong><span class="mt-2 block text-[11px] font-bold">Python</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#4479a1]">SQL</strong><span class="mt-2 block text-[11px] font-bold">MySQL</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#47a248]">M</strong><span class="mt-2 block text-[11px] font-bold">MongoDB</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#e34f26]">5</strong><span class="mt-2 block text-[11px] font-bold">HTML5</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#1572b6]">3</strong><span class="mt-2 block text-[11px] font-bold">CSS3</span></div><div class="bg-white p-5 text-center"><strong class="text-lg text-[#2496ed]">D</strong><span class="mt-2 block text-[11px] font-bold">Docker</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="py-24">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="text-center"><p class="text-xs font-extrabold tracking-[0.2em] text-blue-600">BUILT FOR GROWTH</p><h2 class="mt-3 text-3xl font-extrabold sm:text-4xl">Technology for Every Business</h2><p class="mx-auto mt-5 max-w-2xl leading-7 text-gray-500">From a first company website to a connected business platform, Tara Tech delivers the frontend and backend as one dependable solution.</p></div>
+        <div id="industryAccordion" class="mx-auto mt-12 max-w-4xl overflow-hidden rounded-lg border border-gray-200 bg-white shadow-card">
+          <article class="border-b border-gray-200">
+            <h3><button class="industry-trigger flex w-full items-center justify-between gap-4 px-5 py-5 text-left text-sm font-extrabold tracking-[0.12em] text-ink transition hover:bg-gray-50 sm:px-7" type="button" aria-expanded="true" aria-controls="industry-startups"><span>STARTUPS</span><i data-lucide="chevron-down" class="industry-chevron h-5 w-5 rotate-180 text-blue-600 transition-transform"></i></button></h3>
+            <div id="industry-startups" class="industry-panel bg-blue-950 px-5 py-6 sm:px-7" role="region">
+              <h4 class="text-xl font-extrabold text-yellow-400">Technology for Fast-Scaling Startups</h4>
+              <p class="mt-3 max-w-3xl text-sm leading-7 text-yellow-400">Turn your vision into reality. From a rapid MVP launch to a robust, investor-ready business platform, Tara Tech delivers the frontend and backend as one dependable solution.</p>
+            </div>
+          </article>
+          <article class="border-b border-gray-200">
+            <h3><button class="industry-trigger flex w-full items-center justify-between gap-4 px-5 py-5 text-left text-sm font-extrabold tracking-[0.12em] text-ink transition hover:bg-gray-50 sm:px-7" type="button" aria-expanded="false" aria-controls="industry-retail"><span>RETAIL</span><i data-lucide="chevron-down" class="industry-chevron h-5 w-5 text-blue-600 transition-transform"></i></button></h3>
+            <div id="industry-retail" class="industry-panel bg-blue-950 px-5 py-6 sm:px-7" role="region" hidden>
+              <h4 class="text-xl font-extrabold text-yellow-400">Technology for Modern Retail</h4>
+              <p class="mt-3 max-w-3xl text-sm leading-7 text-yellow-400">Sync your digital storefront with real-time operations. From seamless e-commerce platforms to automated inventory and POS systems, Tara Tech delivers the frontend and backend as one dependable solution.</p>
+            </div>
+          </article>
+          <article class="border-b border-gray-200">
+            <h3><button class="industry-trigger flex w-full items-center justify-between gap-4 px-5 py-5 text-left text-sm font-extrabold tracking-[0.12em] text-ink transition hover:bg-gray-50 sm:px-7" type="button" aria-expanded="false" aria-controls="industry-fintech"><span>FINTECH</span><i data-lucide="chevron-down" class="industry-chevron h-5 w-5 text-blue-600 transition-transform"></i></button></h3>
+            <div id="industry-fintech" class="industry-panel bg-blue-950 px-5 py-6 sm:px-7" role="region" hidden>
+              <h4 class="text-xl font-extrabold text-yellow-400">Technology for Secure Fintech</h4>
+              <p class="mt-3 max-w-3xl text-sm leading-7 text-yellow-400">Build financial tools your users can trust. From secure data dashboards to high-volume transaction processing systems, Tara Tech delivers the frontend and backend as one dependable solution.</p>
+            </div>
+          </article>
+          <article class="border-b border-gray-200">
+            <h3><button class="industry-trigger flex w-full items-center justify-between gap-4 px-5 py-5 text-left text-sm font-extrabold tracking-[0.12em] text-ink transition hover:bg-gray-50 sm:px-7" type="button" aria-expanded="false" aria-controls="industry-edtech"><span>EDTECH</span><i data-lucide="chevron-down" class="industry-chevron h-5 w-5 text-blue-600 transition-transform"></i></button></h3>
+            <div id="industry-edtech" class="industry-panel bg-blue-950 px-5 py-6 sm:px-7" role="region" hidden>
+              <h4 class="text-xl font-extrabold text-yellow-400">Technology for Digital Education</h4>
+              <p class="mt-3 max-w-3xl text-sm leading-7 text-yellow-400">Power the future of learning. From intuitive student portals to interactive virtual classroom infrastructure, Tara Tech delivers the frontend and backend as one dependable solution.</p>
+            </div>
+          </article>
+          <article class="border-b border-gray-200">
+            <h3><button class="industry-trigger flex w-full items-center justify-between gap-4 px-5 py-5 text-left text-sm font-extrabold tracking-[0.12em] text-ink transition hover:bg-gray-50 sm:px-7" type="button" aria-expanded="false" aria-controls="industry-ngos"><span>NGOs</span><i data-lucide="chevron-down" class="industry-chevron h-5 w-5 text-blue-600 transition-transform"></i></button></h3>
+            <div id="industry-ngos" class="industry-panel bg-blue-950 px-5 py-6 sm:px-7" role="region" hidden>
+              <h4 class="text-xl font-extrabold text-yellow-400">Technology for Global Impact</h4>
+              <p class="mt-3 max-w-3xl text-sm leading-7 text-yellow-400">Maximize your reach and efficiency. From secure donor management platforms to transparent public impact dashboards, Tara Tech delivers the frontend and backend as one dependable solution.</p>
+            </div>
+          </article>
+          <article>
+            <h3><button class="industry-trigger flex w-full items-center justify-between gap-4 px-5 py-5 text-left text-sm font-extrabold tracking-[0.12em] text-ink transition hover:bg-gray-50 sm:px-7" type="button" aria-expanded="false" aria-controls="industry-enterprise"><span>ENTERPRISE</span><i data-lucide="chevron-down" class="industry-chevron h-5 w-5 text-blue-600 transition-transform"></i></button></h3>
+            <div id="industry-enterprise" class="industry-panel bg-blue-950 px-5 py-6 sm:px-7" role="region" hidden>
+              <h4 class="text-xl font-extrabold text-yellow-400">Technology for Global Enterprise</h4>
+              <p class="mt-3 max-w-3xl text-sm leading-7 text-yellow-400">Modernize your corporate operations safely. From legacy system migrations to highly secure, high-availability internal software, Tara Tech delivers the frontend and backend as one dependable solution.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="team" class="border-y border-gray-200 bg-gray-50 py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8">
+        <div class="text-center">
+          <p class="text-xs font-extrabold tracking-[0.2em] text-blue-600">THE PEOPLE BEHIND THE PRODUCT</p>
+          <h2 class="mt-3 text-[1.9rem] font-extrabold leading-[2.2rem] tracking-tight sm:text-[2.35rem] sm:leading-[2.6rem]">Strategy, Engineering &amp; Growth Under One Roof</h2>
+          <p class="mx-auto mt-5 max-w-3xl text-base leading-8 text-gray-600">Meet the specialists who turn ambitious ideas into digital products that perform. One accountable team aligns business strategy, product engineering and audience growth from the first workshop through launch and beyond.</p>
+        </div>
+
+        <div class="mt-14 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Kiir%20David.jpeg" alt="Kiir David">
+            <div class="mt-3 flex items-center gap-2" aria-label="Founder outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20speak%20with%20your%20Founder%20about%20business%20strategy." target="_blank" rel="noopener noreferrer" aria-label="Contact the Founder on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Kiir David</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Founder &amp; Principal Strategist</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Strategy That Drives Growth</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/John%20Marit.jpeg" alt="John Marit">
+            <div class="mt-3 flex items-center gap-2" aria-label="Lead full-stack developer outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20a%20full-stack%20project." target="_blank" rel="noopener noreferrer" aria-label="Contact John Marit on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">John Marit</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Lead Full-Stack Developer</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Products Built to Scale</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Ateng%20Aguto.jpeg" alt="Ateng Aguto">
+            <div class="mt-3 flex items-center gap-2" aria-label="Full-stack developer outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20a%20full-stack%20project." target="_blank" rel="noopener noreferrer" aria-label="Contact Ateng Aguto on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Ateng Aguto</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Full-Stack Developer</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Complete Products, End to End</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Deng%20Marop.jpeg" alt="Deng Marop">
+            <div class="mt-3 flex items-center gap-2" aria-label="Deng Marop outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20a%20full-stack%20project." target="_blank" rel="noopener noreferrer" aria-label="Contact Deng Marop on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Deng Marop</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Full-Stack Developer</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Complete Products, End to End</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Igam%20Mayor.jpeg" alt="Igam Mayor">
+            <div class="mt-3 flex items-center gap-2" aria-label="Igam Mayor outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20a%20frontend%20project." target="_blank" rel="noopener noreferrer" aria-label="Contact Igam Mayor on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Igam Mayor</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Frontend Developer</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Interfaces People Enjoy</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Kachuol%20Deng.jpeg" alt="Kachuol Deng">
+            <div class="mt-3 flex items-center gap-2" aria-label="Kachuol Deng outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20a%20frontend%20project." target="_blank" rel="noopener noreferrer" aria-label="Contact Kachuol Deng on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Kachuol Deng</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Frontend Developer</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Interfaces People Enjoy</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Achol%20Thon.jpeg" alt="Achol Thon">
+            <div class="mt-3 flex items-center gap-2" aria-label="Growth marketer outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20SEO%20and%20growth." target="_blank" rel="noopener noreferrer" aria-label="Contact Achol Thon on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Achol Thon</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Growth Marketer &amp; SEO Specialist</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Visibility That Converts</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="Team/Samuel%20Kuol.jpeg" alt="Samuel Kuol">
+            <div class="mt-3 flex items-center gap-2" aria-label="Social media marketer outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20content%20and%20social%20media." target="_blank" rel="noopener noreferrer" aria-label="Contact Samuel Kuol on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Samuel Kuol</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Social Media &amp; Content Marketer</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Stories That Build Brands</h4>
+          </article>
+
+          <article class="reveal overflow-hidden rounded-lg border border-yellow-400/60 bg-white p-5 shadow-card">
+            <img class="h-64 w-full rounded-2xl object-cover" src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=700&amp;q=85" alt="Project coordinator portrait placeholder">
+            <div class="mt-3 flex items-center gap-2" aria-label="Project coordinator outreach links"><a class="grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#1e9e4a] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950" href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20project%20delivery." target="_blank" rel="noopener noreferrer" aria-label="Contact Nyamal Deng on WhatsApp" title="WhatsApp"><i class="bi bi-whatsapp" aria-hidden="true"></i></a></div>
+            <h3 class="mt-5 text-2xl font-extrabold">Nyamal Deng</h3><p class="mt-2 text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600">Project Coordinator</p><h4 class="mt-2 text-sm font-semibold text-gray-500">Projects Kept on Track</h4>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="overflow-hidden rounded-lg bg-blue-950 py-24 text-white lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><p class="text-center text-xs font-extrabold tracking-[0.2em] text-yellow-300">Why Tara Tech</p><h2 class="mt-3 text-center text-4xl font-extrabold">One Team, Complete Delivery</h2>
+        <div class="mt-12 grid gap-5 lg:grid-cols-3">
+          <article class="flex min-h-72 flex-col overflow-hidden rounded-lg bg-white p-7 text-ink"><span class="grid h-12 w-12 place-items-center bg-yellow-400"><i data-lucide="monitor-smartphone" class="h-6 w-6"></i></span><h3 class="mt-8 text-xl font-extrabold">Frontend Excellence</h3><p class="mt-4 text-sm leading-7 text-gray-600">Responsive, accessible interfaces that feel fast and work beautifully across phones, tablets and desktops.</p></article>
+          <article class="flex min-h-72 flex-col overflow-hidden rounded-lg bg-white p-7 text-ink"><span class="grid h-12 w-12 place-items-center bg-yellow-400"><i data-lucide="server" class="h-6 w-6"></i></span><h3 class="mt-8 text-xl font-extrabold">Backend Reliability</h3><p class="mt-4 text-sm leading-7 text-gray-600">Secure APIs, databases and server logic designed around your real business workflows and future growth.</p></article>
+          <article class="flex min-h-72 flex-col overflow-hidden rounded-lg bg-white p-7 text-ink"><span class="grid h-12 w-12 place-items-center bg-yellow-400"><i data-lucide="rocket" class="h-6 w-6"></i></span><h3 class="mt-8 text-xl font-extrabold">Launch &amp; Support</h3><p class="mt-4 text-sm leading-7 text-gray-600">Deployment, performance optimization and continued technical support from a team that knows the whole product.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><p class="text-xs font-extrabold tracking-[0.2em] text-blue-600">OUR PROCESS</p><h2 class="mt-3 text-4xl font-extrabold sm:text-5xl">How We Deliver</h2>
+        <div class="mt-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+          <article class="relative border-t-2 border-blue-600 pt-7"><span class="number-outline text-5xl font-extrabold">01</span><h3 class="mt-5 text-xl font-extrabold">Discover</h3><p class="mt-3 text-sm leading-6 text-gray-500">Understanding your goals, audience and user needs.</p><i data-lucide="arrow-right" class="absolute -right-6 top-8 hidden h-5 w-5 text-gray-300 lg:block"></i></article>
+          <article class="relative border-t-2 border-yellow-400 pt-7"><span class="number-outline text-5xl font-extrabold">02</span><h3 class="mt-5 text-xl font-extrabold">Architect</h3><p class="mt-3 text-sm leading-6 text-gray-500">Planning the user experience, data model and technical foundation.</p><i data-lucide="arrow-right" class="absolute -right-6 top-8 hidden h-5 w-5 text-gray-300 lg:block"></i></article>
+          <article class="relative border-t-2 border-blue-600 pt-7"><span class="number-outline text-5xl font-extrabold">03</span><h3 class="mt-5 text-xl font-extrabold">Build</h3><p class="mt-3 text-sm leading-6 text-gray-500">Developing and integrating the frontend, backend and database.</p><i data-lucide="arrow-right" class="absolute -right-6 top-8 hidden h-5 w-5 text-gray-300 lg:block"></i></article>
+          <article class="border-t-2 border-blue-600 pt-7"><span class="number-outline text-5xl font-extrabold">04</span><h3 class="mt-5 text-xl font-extrabold">Deliver</h3><p class="mt-3 text-sm leading-6 text-gray-500">Testing, optimizing and delivering the final product.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="bg-gray-50 py-24 lg:py-32">
+      <div class="mx-auto max-w-7xl px-5 lg:px-8"><p class="text-xs font-extrabold tracking-[0.2em] text-blue-600">GET IN TOUCH</p><h2 class="mt-3 text-4xl font-extrabold sm:text-5xl">Let's Start a Project</h2>
+        <div class="mt-12 grid gap-12 lg:grid-cols-[.72fr_1.28fr]">
+          <div><p class="max-w-md text-lg leading-8 text-gray-600">Need a website, application or backend system? Tell us what your business needs, and Tara Tech will build the complete solution.</p><dl class="mt-10 space-y-7"><div class="flex gap-4"><i data-lucide="mail" class="h-5 w-5 text-blue-600"></i><div><dt class="text-xs font-bold uppercase text-gray-400">Email</dt><dd class="mt-1 font-semibold"><a href="mailto:tara.tech211@gmail.com" class="hover:text-blue-600">tara.tech211@gmail.com</a></dd></div></div><div class="flex gap-4"><i data-lucide="phone" class="h-5 w-5 text-blue-600"></i><div><dt class="text-xs font-bold uppercase text-gray-400">Telephone</dt><dd class="mt-1 font-semibold"><a href="tel:+211929150111" class="hover:text-blue-600">+211 929 150 111</a></dd></div></div><div class="flex gap-4"><i data-lucide="map-pin" class="h-5 w-5 text-blue-600"></i><div><dt class="text-xs font-bold uppercase text-gray-400">Location</dt><dd class="mt-1 font-semibold">Atlabara, Alem Building</dd></div></div><div class="flex gap-4"><span class="relative mt-1 flex h-3 w-3 shrink-0"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span><span class="relative h-3 w-3 rounded-full bg-blue-600"></span></span><div><dt class="text-xs font-bold uppercase text-gray-400">Status</dt><dd class="mt-1 font-semibold">Available for new projects</dd></div></div></dl></div>
+          <form id="contactForm" class="grid gap-5 bg-white p-6 shadow-card sm:grid-cols-2 sm:p-9"><label class="text-xs font-bold text-gray-600">YOUR NAME<input required name="name" class="mt-2 h-13 w-full border border-gray-300 px-4 text-sm font-medium focus:border-blue-600" placeholder="Your name"></label><label class="text-xs font-bold text-gray-600">YOUR EMAIL<input required type="email" name="email" class="mt-2 h-13 w-full border border-gray-300 px-4 text-sm font-medium focus:border-blue-600" placeholder="you@company.com"></label><label class="text-xs font-bold text-gray-600">PHONE<input type="tel" name="phone" class="mt-2 h-13 w-full border border-gray-300 px-4 text-sm font-medium focus:border-blue-600" placeholder="+211 ..."></label><label class="text-xs font-bold text-gray-600">PROJECT TYPE<select required name="type" class="mt-2 h-13 w-full border border-gray-300 bg-white px-4 text-sm font-medium focus:border-blue-600"><option value="">Select a service</option><option>Frontend Development</option><option>Backend Development</option><option>Full-Stack Web App</option><option>E-Commerce Platform</option><option>API &amp; Database</option></select></label><label class="text-xs font-bold text-gray-600 sm:col-span-2">BUDGET RANGE<select required name="budget" class="mt-2 h-13 w-full border border-gray-300 bg-white px-4 text-sm font-medium focus:border-blue-600"><option value="">Select a range</option><option>Let's discuss</option><option>$500 - $1k</option><option>$1k - $5k</option><option>$5k - $10k</option><option>$10k+</option></select></label><label class="text-xs font-bold text-gray-600 sm:col-span-2">MESSAGE<textarea required name="message" rows="5" class="mt-2 w-full resize-y border border-gray-300 p-4 text-sm font-medium focus:border-blue-600" placeholder="Tell us about your project..."></textarea></label><div class="flex flex-col items-start gap-3 sm:col-span-2 sm:flex-row sm:items-center"><button class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-7 py-4 text-sm font-bold text-white hover:bg-blue-700" type="submit">Send inquiry <i data-lucide="send" class="h-4 w-4 text-yellow-300"></i></button><p id="formStatus" class="text-sm font-semibold text-blue-600" role="status"></p></div></form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a href="https://wa.me/211929150111?text=Hello%20Tara%20Tech%2C%20I%20would%20like%20to%20discuss%20a%20project."
+    class="fixed bottom-5 right-5 z-40 grid h-12 w-12 place-items-center rounded-full bg-[#25D366] text-xl text-white shadow-[0_12px_30px_rgba(17,24,39,.28)] transition hover:-translate-y-1 hover:bg-[#20BD5A] sm:bottom-7 sm:right-7"
+     target="_blank"
+     rel="noopener noreferrer"
+     aria-label="Chat with Tara Tech on WhatsApp"
+     title="Chat with Tara Tech on WhatsApp">
+    <i class="bi bi-whatsapp" aria-hidden="true"></i>
+  </a>
+
+  <svg class="absolute h-0 w-0" aria-hidden="true" focusable="false">
+    <filter id="remove-white" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  -1 -1 -1 0 2.9"></feColorMatrix>
+    </filter>
+  </svg>
+
+  <footer class="overflow-hidden rounded-lg bg-blue-950 text-white">
+    <div class="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:grid-cols-2 lg:grid-cols-[1.35fr_.7fr_.8fr_1.15fr] lg:px-8">
+      <div><a href="#home" class="flex items-center gap-3"><span class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden" aria-hidden="true"><img class="footer-logo h-full w-full scale-[2.4] object-contain" src="Tara%20Tech%20Logo-01.jpg" alt=""></span><strong>Tara Tech</strong></a><p class="mt-5 max-w-xs text-sm leading-7 text-blue-100/65">Complete frontend and backend solutions for businesses ready to grow.</p><div class="mt-6 flex gap-3"><a class="grid h-10 w-10 place-items-center rounded-lg border border-white/20 hover:bg-yellow-400 hover:text-blue-950" href="mailto:tara.tech211@gmail.com" aria-label="Email Tara Tech" title="Email Tara Tech"><i data-lucide="mail" class="h-4 w-4"></i></a><a class="grid h-10 w-10 place-items-center rounded-lg border border-white/20 hover:bg-yellow-400 hover:text-blue-950" href="tel:+211929150111" aria-label="Call Tara Tech at +211 929 150 111" title="Call +211 929 150 111"><i data-lucide="phone" class="h-4 w-4"></i></a><a class="grid h-10 w-10 place-items-center rounded-lg border border-white/20 hover:bg-yellow-400 hover:text-blue-950" href="#contact" aria-label="Tara Tech location" title="Atlabara, Alem Building"><i data-lucide="map-pin" class="h-4 w-4"></i></a><a class="grid h-10 w-10 place-items-center rounded-lg border border-white/20 hover:bg-yellow-400 hover:text-blue-950" href="https://www.facebook.com/share/199EjcTxNz/" target="_blank" rel="noopener noreferrer" aria-label="Visit Tara Tech on Facebook" title="Tara Tech on Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a></div></div>
+      <div><h3 class="text-sm font-bold">Quick Links</h3><ul class="mt-5 space-y-3 text-sm text-blue-100/65"><li><a href="#about">About</a></li><li><a href="#projects">Projects</a></li><li><a href="#process">Process</a></li><li><a href="#contact">Contact</a></li></ul></div>
+      <div><h3 class="text-sm font-bold">Services</h3><ul class="mt-5 space-y-3 text-sm text-blue-100/65"><li>Frontend Development</li><li>Backend Development</li><li>APIs &amp; Databases</li><li>Deployment &amp; Support</li></ul></div>
+      <div><h3 class="text-sm font-bold">Contact Tara Tech</h3><p class="mt-5 text-sm leading-6 text-blue-100/65">Atlabara, Alem Building</p><a href="mailto:tara.tech211@gmail.com" class="mt-4 block text-sm text-yellow-300">tara.tech211@gmail.com</a><a href="tel:+211929150111" class="mt-2 block text-sm text-yellow-300">+211 929 150 111</a></div>
+    </div>
+    <div class="border-t border-white/10"><div class="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-blue-100/55 sm:flex-row sm:items-center sm:justify-between lg:px-8"><p>© 2024 Tara Tech. All Rights Reserved.</p><div class="flex gap-6"><a href="#">Privacy Policy</a><a href="#">Terms</a></div></div></div>
+  </footer>
+
+  <div id="toast" class="fixed bottom-5 left-1/2 z-[60] -translate-x-1/2 rounded-lg bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lift dark:bg-white dark:text-slate-950" role="status" hidden></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      const themeToggle = document.getElementById('siteThemeToggle');
+      const setTheme = dark => {
+        document.documentElement.classList.toggle('dark', dark);
+        localStorage.setItem('tara-news-theme', dark ? 'dark' : 'light');
+        themeToggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+        themeToggle.innerHTML = `<i data-lucide="${dark ? 'sun' : 'moon'}" class="h-5 w-5"></i>`;
+        lucide.createIcons();
+      };
+      setTheme(document.documentElement.classList.contains('dark'));
+      themeToggle.addEventListener('click', () => setTheme(!document.documentElement.classList.contains('dark')));
+      document.querySelectorAll('#team article').forEach(card => {
+        const memberName = card.querySelector('h3').textContent.trim();
+        const outreachLinks = card.querySelector('[aria-label$="outreach links"]');
+        const emailLink = document.createElement('a');
+        emailLink.className = 'grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-gray-600 transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950';
+        emailLink.href = `mailto:tara.tech211@gmail.com?subject=${encodeURIComponent(`Message for ${memberName}`)}`;
+        emailLink.setAttribute('aria-label', `Email ${memberName}`);
+        emailLink.title = 'Email';
+        emailLink.innerHTML = '<i class="bi bi-envelope" aria-hidden="true"></i>';
+        outreachLinks.append(emailLink);
+        const linkedInRoles = ['Founder outreach links', 'Lead full-stack developer outreach links', 'Full-stack developer outreach links'];
+        if (!linkedInRoles.includes(outreachLinks.getAttribute('aria-label'))) return;
+        const linkedInLink = document.createElement('a');
+        linkedInLink.className = 'grid h-8 w-8 place-items-center rounded-xl border-[0.5px] border-gray-200 text-[#0a66c2] transition hover:border-yellow-400 hover:bg-yellow-400 hover:text-blue-950';
+        const linkedInProfiles = {
+          'Founder outreach links': 'https://www.linkedin.com/in/kiir-david-aa5210331',
+          'Full-stack developer outreach links': 'https://www.linkedin.com/in/ateng-aguto-anok/'
+        };
+        linkedInLink.href = linkedInProfiles[outreachLinks.getAttribute('aria-label')]
+          || `https://www.linkedin.com/search/results/people/?keywords=${encodeURIComponent(memberName)}`;
+        linkedInLink.target = '_blank';
+        linkedInLink.rel = 'noopener noreferrer';
+        linkedInLink.setAttribute('aria-label', `Find ${memberName} on LinkedIn`);
+        linkedInLink.title = 'LinkedIn';
+        linkedInLink.innerHTML = '<i class="bi bi-linkedin" aria-hidden="true"></i>';
+        outreachLinks.append(linkedInLink);
+      });
+      const menuButton = document.getElementById('menuButton');
+      const mobileMenu = document.getElementById('mobileMenu');
+      const setMenuState = open => {
+        menuButton.setAttribute('aria-expanded', String(open));
+        mobileMenu.hidden = !open;
+        menuButton.innerHTML = `<i data-lucide="${open ? 'x' : 'menu'}" class="h-5 w-5"></i>`;
+        lucide.createIcons();
+      };
+      menuButton.addEventListener('click', () => {
+        const expanded = menuButton.getAttribute('aria-expanded') === 'true';
+        setMenuState(!expanded);
+      });
+      mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenuState(false)));
+      const heroSlides = [...document.querySelectorAll('#heroSlider .hero-slide')];
+      if (heroSlides.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        let activeSlide = 0;
+        window.setInterval(() => {
+          heroSlides[activeSlide].classList.remove('is-active');
+          activeSlide = (activeSlide + 1) % heroSlides.length;
+          heroSlides[activeSlide].classList.add('is-active');
+        }, 4000);
+      }
+      const industryTriggers = [...document.querySelectorAll('.industry-trigger')];
+      industryTriggers.forEach(trigger => trigger.addEventListener('click', () => {
+        const opening = trigger.getAttribute('aria-expanded') !== 'true';
+        industryTriggers.forEach(item => {
+          const isCurrent = item === trigger && opening;
+          item.setAttribute('aria-expanded', String(isCurrent));
+          document.getElementById(item.getAttribute('aria-controls')).hidden = !isCurrent;
+          item.querySelector('.industry-chevron').classList.toggle('rotate-180', isCurrent);
+        });
+      }));
+      const observer = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('is-visible'); }), { threshold: 0.12 });
+      document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+      document.getElementById('contactForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const status = document.getElementById('formStatus');
+        const data = new FormData(form);
+        const message = `Project: ${data.get('type')}\nBudget: ${data.get('budget')}\n\n${data.get('message')}`;
+        status.textContent = 'Sending inquiry...';
+        try {
+          await window.TaraSupabaseAPI.submitInquiry(
+            data.get('name'), data.get('email'), data.get('phone'), message
+          );
+          form.reset();
+          status.textContent = 'Thanks. Your inquiry has been received.';
+        } catch (error) {
+          status.textContent = error.message || 'Unable to send your inquiry right now.';
+        }
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="news-events.js"></script>
+</body>
+</html>
