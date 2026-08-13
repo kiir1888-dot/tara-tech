@@ -1,5 +1,4 @@
 (() => {
-  const COMPANY_EMAIL = 'tara.tech211@gmail.com';
   const config = window.TARA_SUPABASE;
   const api = window.TaraSupabaseAPI;
   const configured = config
@@ -107,17 +106,14 @@
     await loadInquiries();
   };
 
-    const createInquiryListItem = inquiry => {
+  const createInquiryListItem = inquiry => {
     const item = document.createElement('article');
     item.className = 'rounded-lg border border-gray-200 p-4';
-
     const header = document.createElement('div');
     header.className = 'flex items-start justify-between gap-2';
-
     const heading = document.createElement('p');
     heading.className = 'text-sm font-extrabold text-ink';
     heading.textContent = inquiry.name;
-
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'grid h-7 w-7 shrink-0 place-items-center rounded-md border border-red-200 text-red-600 hover:bg-red-50';
     deleteBtn.type = 'button';
@@ -133,21 +129,16 @@
         inquiriesStatus.textContent = error.message || 'Unable to delete.';
       }
     });
-
     header.append(heading, deleteBtn);
-
     const meta = document.createElement('p');
     meta.className = 'mt-1 text-xs font-semibold text-gray-500';
-    meta.textContent = `${inquiry.email}${inquiry.phone ? ` · ${inquiry.phone}` : ''}`;
-
+    meta.textContent = inquiry.email + (inquiry.phone ? ' · ' + inquiry.phone : '');
     const message = document.createElement('p');
     message.className = 'mt-2 text-sm leading-6 text-gray-600';
     message.textContent = inquiry.message;
-
     const created = document.createElement('p');
     created.className = 'mt-3 text-xs text-gray-500';
     created.textContent = new Date(inquiry.created_at).toLocaleString();
-
     item.append(header, meta, message, created);
     return item;
   };
@@ -168,16 +159,12 @@
   };
 
   const verifyAdmin = async () => {
-    try {
-      return await api.checkAdminStatus();
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
+    try { return await api.checkAdminStatus(); }
+    catch (error) { console.error(error); return false; }
   };
 
   const requireAdmin = async user => {
-    if (user?.email?.toLowerCase() === COMPANY_EMAIL && await verifyAdmin(user)) {
+    if (user && await verifyAdmin(user)) {
       await showDashboard(user);
       return;
     }
@@ -190,26 +177,26 @@
     item.className = 'rounded-lg border border-gray-200 p-4';
     const meta = document.createElement('p');
     meta.className = 'text-xs font-extrabold uppercase tracking-[0.12em] text-blue-600';
-    meta.textContent = `${post.kind} · ${post.status}`;
+    meta.textContent = post.kind + ' · ' + post.status;
     const title = document.createElement('h3');
     title.className = 'mt-2 font-extrabold';
     title.textContent = post.title;
     const updated = document.createElement('p');
     updated.className = 'mt-2 text-xs text-gray-500';
-    updated.textContent = `Updated ${new Date(post.updated_at).toLocaleString()}`;
+    updated.textContent = 'Updated ' + new Date(post.updated_at).toLocaleString();
     const actions = document.createElement('div');
     actions.className = 'mt-4 flex gap-2';
-    const editButton = document.createElement('button');
-    editButton.className = 'rounded-lg border border-gray-300 px-3 py-2 text-xs font-bold hover:bg-gray-50';
-    editButton.type = 'button';
-    editButton.textContent = 'Edit';
-    editButton.addEventListener('click', () => editPost(post.id));
-    const deleteButton = document.createElement('button');
-    deleteButton.className = 'rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50';
-    deleteButton.type = 'button';
-    deleteButton.textContent = 'Delete';
-    deleteButton.addEventListener('click', () => deletePost(post.id));
-    actions.append(editButton, deleteButton);
+    const editBtn = document.createElement('button');
+    editBtn.className = 'rounded-lg border border-gray-300 px-3 py-2 text-xs font-bold hover:bg-gray-50';
+    editBtn.type = 'button';
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => editPost(post.id));
+    const delBtn = document.createElement('button');
+    delBtn.className = 'rounded-lg border border-red-200 px-3 py-2 text-xs font-bold text-red-700 hover:bg-red-50';
+    delBtn.type = 'button';
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => deletePost(post.id));
+    actions.append(editBtn, delBtn);
     item.append(meta, title, updated, actions);
     return item;
   };
@@ -236,14 +223,13 @@
         published_at: item.created_at, updated_at: item.created_at
       }));
       const eventPosts = eventsResult.data.map(item => ({
-        ...item, kind: 'Event', status: 'published', slug: '', content: item.location,
+        ...item, kind: 'Event', status: 'published', slug: '', content: item.description, description: item.location,
         published_at: item.event_date, updated_at: item.created_at
       }));
       posts = [...newsPosts, ...eventPosts].sort((left, right) => new Date(right.updated_at) - new Date(left.updated_at));
       renderPosts();
     } catch (error) {
       postsStatus.textContent = error.message || 'Unable to load content.';
-      return;
     }
   };
 
@@ -270,7 +256,7 @@
 
   const deletePost = async id => {
     const post = posts.find(item => item.id === id);
-    if (!post || !window.confirm(`Delete “${post.title}”? This cannot be undone.`)) return;
+    if (!post || !window.confirm('Delete "' + post.title + '"? This cannot be undone.')) return;
     postsStatus.textContent = 'Deleting post...';
     try {
       if (post.kind === 'News') await api.deleteNews(id);
@@ -292,7 +278,8 @@
     }
     loginStatus.textContent = 'Signing in...';
     try {
-      const user = await api.adminLogin(COMPANY_EMAIL, document.getElementById('loginPassword').value);
+      const email = document.getElementById('loginEmail').value.trim();
+      const user = await api.adminLogin(email, document.getElementById('loginPassword').value);
       await requireAdmin(user);
     } catch (error) {
       loginStatus.textContent = 'Sign-in failed. Check your credentials.';
@@ -304,6 +291,7 @@
       loginStatus.textContent = 'Configure supabase-config.js before creating a password.';
       return;
     }
+    const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     if (password.length < 8) {
       loginStatus.textContent = 'Enter a password with at least 8 characters.';
@@ -316,7 +304,7 @@
     }
     loginStatus.textContent = 'Creating the company account...';
     const { data, error } = await client.auth.signUp({
-      email: COMPANY_EMAIL,
+      email,
       password,
       options: { emailRedirectTo: redirectUrl }
     });
@@ -325,7 +313,7 @@
       return;
     }
     loginStatus.textContent = data.session
-      ? 'Password created. Set this user\'s profile role to admin to enable dashboard access.'
+      ? "Password created. Set this user's profile role to admin to enable dashboard access."
       : 'Check the company email and confirm the account, then set its profile role to admin.';
   });
 
@@ -340,10 +328,11 @@
       return;
     }
     loginStatus.textContent = 'Sending a password reset email...';
-    const { error } = await client.auth.resetPasswordForEmail(COMPANY_EMAIL, {
+    const email = document.getElementById('loginEmail').value.trim();
+    const { error } = await client.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl
     });
-    loginStatus.textContent = error ? error.message : 'Check the company inbox for the password reset link.';
+    loginStatus.textContent = error ? error.message : 'Check your inbox for the password reset link.';
   });
 
   recoveryForm.addEventListener('submit', async event => {
@@ -410,7 +399,7 @@
     }
     clearPreviewUrl();
     previewUrl = URL.createObjectURL(file);
-    showImage(previewUrl, `${file.name} selected.`);
+    showImage(previewUrl, file.name + ' selected.');
   });
 
   removeImageButton.addEventListener('click', () => {
@@ -436,9 +425,9 @@
         if (id) await api.updateNews(id, title, content, file);
         else await api.postNews(title, content, file);
       } else {
-        const details = { title, description, date: dateValue || new Date().toISOString(), location: content };
+        const details = { title, description: content, date: dateValue || new Date().toISOString(), location: description };
         if (id) await api.updateEvent(id, details, file);
-        else await api.createEvent(title, description, details.date, content, file);
+        else await api.createEvent(title, content, details.date, description, file);
       }
       resetEditor();
       editorStatus.textContent = 'Post saved.';
@@ -449,17 +438,17 @@
     }
   });
 
-  // Password visibility toggles
-  document.querySelectorAll('[data-toggle]').forEach(button => {
-    button.addEventListener('click', () => {
-      const input = document.getElementById(button.dataset.toggle);
-      if (!input) return;
-      const isPassword = input.type === 'password';
-      input.type = isPassword ? 'text' : 'password';
-      button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-      button.innerHTML = `<i data-lucide="${isPassword ? 'eye-off' : 'eye'}" class="h-4 w-4 text-gray-500"></i>`;
-      window.lucide?.createIcons();
-    });
+  // Password visibility toggles - event delegation
+  document.addEventListener('click', event => {
+    const button = event.target.closest('[data-toggle]');
+    if (!button) return;
+    const input = document.getElementById(button.dataset.toggle);
+    if (!input) return;
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    button.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+    button.innerHTML = '<i data-lucide="' + (isPassword ? 'eye-off' : 'eye') + '" class="h-4 w-4 text-gray-500"></i>';
+    window.lucide?.createIcons();
   });
 
   window.addEventListener('pagehide', clearPreviewUrl, { once: true });

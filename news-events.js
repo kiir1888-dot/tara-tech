@@ -1,67 +1,8 @@
 (() => {
   const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=85';
-  const stories = [
-    {
-      id: 'digital-products-2026', category: 'Tech', featured: true, popular: true,
-      title: 'The next era of digital products is practical, connected and human',
-      snippet: 'Tara Tech looks at the systems, interfaces and decisions shaping useful digital experiences in 2026.',
-      time: '18 min ago', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=88'
-    },
-    {
-      id: 'founder-forum', category: 'Business', trending: true, popular: true,
-      title: 'Founder Forum returns with a focus on resilient growth',
-      snippet: 'Operators and builders meet to exchange practical lessons from growing digital businesses.',
-      time: '1 hr ago', image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'designing-cities', category: 'Lifestyle', trending: true,
-      title: 'Designing technology that fits the rhythm of modern cities',
-      snippet: 'A field guide to creating services that feel local, accessible and dependable.',
-      time: '3 hrs ago', image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'ai-workflows', category: 'Tech', popular: true,
-      title: 'Five AI workflows that give small teams their time back',
-      snippet: 'A practical look at where automation improves operations and where human judgment should remain in control.',
-      time: 'Today, 9:20 AM', image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'customer-trust', category: 'Business',
-      title: 'Why customer trust is now a product requirement',
-      snippet: 'Clear data practices, reliable support and honest interfaces are becoming the strongest growth channels.',
-      time: 'Yesterday', image: 'https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'remote-craft', category: 'Lifestyle', popular: true,
-      title: 'The new rituals helping distributed teams do better work',
-      snippet: 'Small changes to communication and planning can create calmer, more focused remote teams.',
-      time: 'Aug 5, 2026', image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'cyber-basics', category: 'Tech',
-      title: 'Security basics every growing company should revisit',
-      snippet: 'The essential controls that reduce risk without slowing down your team or customers.',
-      time: 'Aug 4, 2026', image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'local-commerce', category: 'Business',
-      title: 'Local commerce is becoming digital by default',
-      snippet: 'Payments, inventory and customer care are converging into simpler tools for independent businesses.',
-      time: 'Aug 2, 2026', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=85'
-    },
-    {
-      id: 'digital-balance', category: 'Lifestyle',
-      title: 'Building a healthier relationship with always-on technology',
-      snippet: 'Designers and users share habits that keep digital tools useful without letting them take over.',
-      time: 'Jul 30, 2026', image: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=1000&q=85'
-    }
-  ];
+    const stories = [];
 
-  const events = [
-    { month: 'SEP', day: '12', time: '9:00 AM - 1:00 PM', location: 'Alem Building, Atlabara', title: 'Tara Tech Product & Innovation Forum', description: 'A practical morning of product strategy, live demos and conversations with local builders.' },
-    { month: 'OCT', day: '03', time: '4:00 PM - 6:30 PM', location: 'Online livestream', title: 'Modern Web Systems: From Idea to Launch', description: 'A focused session on planning, building and operating dependable full-stack products.' },
-    { month: 'NOV', day: '21', time: '10:00 AM - 3:00 PM', location: 'Juba, South Sudan', title: 'Digital Business Growth Workshop', description: 'Hands-on guidance for teams improving their customer journey, operations and online presence.' }
-  ];
+    const events = [];
 
   const elements = {
     heroGrid: document.getElementById('heroGrid'), newsGrid: document.getElementById('newsGrid'),
@@ -108,9 +49,13 @@
     return article;
   };
 
-  const renderHero = () => {
+    const renderHero = () => {
     const featured = allStories.find(story => story.featured) || allStories[0];
     const trending = allStories.filter(story => story.trending).slice(0, 2);
+    if (!featured) {
+      elements.heroGrid.replaceChildren();
+      return;
+    }
     const side = createElement('div', 'grid min-h-0 gap-4 sm:grid-cols-2 lg:grid-cols-1');
     trending.forEach(story => side.append(createHeroCard(story)));
     elements.heroGrid.replaceChildren(createHeroCard(featured, true), side);
