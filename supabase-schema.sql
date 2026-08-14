@@ -8,12 +8,15 @@ create table if not exists public.profiles (
   role text not null default 'user' check (role in ('user', 'admin'))
 );
 
+
 create table if not exists public.news (
   id uuid primary key default gen_random_uuid(),
   title text not null check (char_length(title) between 3 and 160),
   slug text not null unique check (slug ~ '^[a-z0-9]+(?:-[a-z0-9]+)*$'),
   content text not null check (char_length(content) between 1 and 20000),
+  category text not null default 'Tech' check (category in ('Tech', 'Sports')),
   image_url text,
+  views integer not null default 0,
   created_at timestamptz not null default now(),
   created_by uuid not null default auth.uid() references auth.users(id) on delete restrict
 );
@@ -21,9 +24,9 @@ create table if not exists public.news (
 create table if not exists public.events (
   id uuid primary key default gen_random_uuid(),
   title text not null check (char_length(title) between 3 and 160),
-  description text not null check (char_length(description) between 1 and 5000),
+    description text not null check (char_length(description) between 1 and 10000),
   event_date timestamptz not null,
-  location text not null check (char_length(location) between 1 and 300),
+  location text not null check (char_length(location) between 1 and 500),
   image_url text,
   created_at timestamptz not null default now()
 );
@@ -48,9 +51,43 @@ create table if not exists public.contact_inquiries (
 );
 
 create index if not exists news_created_at_idx on public.news (created_at desc);
+create index if not exists news_views_idx on public.news (views desc);
 create index if not exists events_event_date_idx on public.events (event_date);
 create index if not exists team_order_index_idx on public.team (order_index, created_at);
 create index if not exists contact_inquiries_created_at_idx on public.contact_inquiries (created_at desc);
+
+create or replace function public.increment_news_views(news_id uuid)
+returns void
+language sql
+security definer
+set search_path = public, pg_temp
+as $$
+  update public.news set views = views + 1 where id = news_id;
+$$;
+
+grant execute on function public.increment_news_views(uuid) to anon, authenticated;
+
+drop function if exists public.get_popular_news(integer);
+create or replace function public.get_popular_news(limit_count integer default 5)
+returns table(
+  id uuid,
+  title text,
+  category text,
+  views integer
+)
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  select n.id, n.title, n.category, n.views
+  from public.news n
+  where n.created_at >= now() - interval '7 days'
+  order by n.views desc
+  limit limit_count;
+$$;
+
+grant execute on function public.get_popular_news(integer) to anon, authenticated;
 
 create or replace function public.is_admin()
 returns boolean

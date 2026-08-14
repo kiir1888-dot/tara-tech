@@ -17,20 +17,25 @@ serve(async (req) => {
       return new Response("Missing required environment variables", { status: 500 });
     }
 
+    // Build smarter subject based on whether this is an event inquiry
+    const eventTitle = row.event_title ?? "";
+    const baseSubject = eventTitle
+      ? `Inquiry for Event: ${eventTitle}`
+      : "New Contact Inquiry";
+
+    const lines = [
+      `Name: ${row.name ?? ""}`,
+      `Email: ${row.email ?? ""}`,
+      `Phone: ${row.phone ?? ""}`,
+    ];
+    if (eventTitle) lines.push(`Event: ${eventTitle}`);
+    lines.push("", "Message:", row.message ?? "", "", `Created at: ${row.created_at ?? ""}`);
+
     const payload = {
       from: fromEmail,
       to: [toEmail],
-      subject: "New Contact Inquiry",
-      text: [
-        `Name: ${row.name ?? ""}`,
-        `Email: ${row.email ?? ""}`,
-        `Phone: ${row.phone ?? ""}`,
-        "",
-        "Message:",
-        row.message ?? "",
-        "",
-        `Created at: ${row.created_at ?? ""}`
-      ].join("\n")
+      subject: baseSubject,
+      text: lines.join("\n")
     };
 
     const resendResponse = await fetch("https://api.resend.com/emails", {

@@ -282,7 +282,18 @@
       const user = await api.adminLogin(email, document.getElementById('loginPassword').value);
       await requireAdmin(user);
     } catch (error) {
-      loginStatus.textContent = 'Sign-in failed. Check your credentials.';
+      console.error('[Admin] Sign-in error:', error);
+      const message = String(error?.message || error?.error_description || '');
+      const lower = message.toLowerCase();
+      if (lower.includes('email not confirmed')) {
+        loginStatus.textContent = 'This email is not confirmed yet. Open the confirmation email in this inbox (check Spam/Junk) and click the link first.';
+      } else if (lower.includes('invalid login credentials')) {
+        loginStatus.textContent = 'Incorrect email or password.';
+      } else if (lower.includes('too many requests')) {
+        loginStatus.textContent = 'Too many sign-in attempts. Wait a minute and try again.';
+      } else {
+        loginStatus.textContent = message || 'Sign-in failed. Check your credentials.';
+      }
     }
   });
 
