@@ -50,14 +50,14 @@
   };
 
     const renderHero = () => {
-    const featured = allStories.find(story => story.featured) || allStories[0];
-    const trending = allStories.filter(story => story.trending).slice(0, 2);
+    const featured = allStories[0];
+        const sideStories = allStories.slice(1, 3);
     if (!featured) {
       elements.heroGrid.replaceChildren();
       return;
     }
     const side = createElement('div', 'grid min-h-0 gap-4 sm:grid-cols-2 lg:grid-cols-1');
-    trending.forEach(story => side.append(createHeroCard(story)));
+    sideStories.forEach(story => side.append(createHeroCard(story)));
     elements.heroGrid.replaceChildren(createHeroCard(featured, true), side);
   };
 
