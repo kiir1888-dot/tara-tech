@@ -485,12 +485,16 @@
           const web3Result = await web3Response.json();
           if (web3Result.success !== true) throw new Error(web3Result.message || 'Email delivery failed.');
           if (window.TaraSupabaseAPI?.configured) {
-            await window.TaraSupabaseAPI.submitInquiry(
-              data.get('name'), data.get('email'), data.get('phone'), message
-            );
-          }
-          form.reset();
-          status.textContent = 'Thanks. Your inquiry has been received.';
+                      try {
+                        await window.TaraSupabaseAPI.submitInquiry(
+                          data.get('name'), data.get('email'), data.get('phone'), message
+                        );
+                      } catch (inquiryError) {
+                        console.error('Inquiry storage failed:', inquiryError);
+                      }
+                    }
+                    form.reset();
+                    status.textContent = 'Thanks. Your inquiry has been received.';
         } catch (error) {
           status.textContent = error.message || 'Unable to send your inquiry right now.';
         }
