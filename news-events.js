@@ -96,7 +96,8 @@
     window.lucide?.createIcons();
   };
 
-  const renderFilters = () => {
+    const renderFilters = () => {
+    if (!elements.filters) return;
     const categories = ['All', ...new Set(allStories.map(story => story.category))];
     const buttons = categories.map(category => {
       const button = createElement('button', 'filter-button rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-bold transition hover:border-electric-500 hover:text-electric-600 dark:border-slate-700 dark:bg-slate-900', category);
@@ -222,7 +223,8 @@
           image: item.image_url || FALLBACK_IMAGE,
           time: new Date(item.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
         }));
-        allStories = [...liveStories, ...stories];
+                allStories = [...liveStories, ...stories];
+        renderHero();
         renderFilters();
         renderNews();
         renderPopular();
