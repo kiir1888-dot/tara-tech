@@ -465,6 +465,62 @@
     }
   };
 
+  const readCurrentSiteContent = async selector => {
+    const response = await fetch(new URL('/', window.location.href), { cache: 'no-store' });
+    if (!response.ok) throw new Error(`Could not load the current website (HTTP ${response.status}).`);
+    const document = new DOMParser().parseFromString(await response.text(), 'text/html');
+    const elements = [...document.querySelectorAll(selector)];
+    if (!elements.length) throw new Error('No matching content was found on the current website.');
+    return elements;
+  };
+
+  const syncCurrentSiteEntries = async collection => {
+    const editor = managedEditors[collection];
+    const status = document.getElementById(editor.statusId);
+    const isTeam = collection === 'team';
+    status.textContent = `Checking the current website ${isTeam ? 'team' : 'hero slides'}...`;
+
+    try {
+      const cards = await readCurrentSiteContent(
+        isTeam ? '#teamMembersGrid article' : '#heroSlider img.hero-slide'
+      );
+      const entries = cards.map((card, orderIndex) => {
+        if (isTeam) {
+          const image = card.querySelector('img');
+          const name = card.querySelector('h3')?.textContent.trim();
+          const role = card.querySelector('p')?.textContent.trim();
+          const bio = card.querySelector('h4')?.textContent.trim() || '';
+          if (!image?.getAttribute('src') || !name || !role) return null;
+          return {
+            name,
+            role,
+            bio,
+            image_url: new URL(image.getAttribute('src'), new URL('/', window.location.href)).href,
+            order_index: orderIndex
+          };
+        }
+
+        const altText = card.getAttribute('alt')?.trim();
+        const imageUrl = card.getAttribute('src');
+        if (!altText || !imageUrl) return null;
+        return {
+          alt_text: altText,
+          image_url: new URL(imageUrl, new URL('/', window.location.href)).href,
+          order_index: orderIndex
+        };
+      }).filter(Boolean);
+
+      if (!entries.length) throw new Error('No editable content was found in the current site section.');
+      const added = await api.syncManagedContent(editor.collection, entries);
+      await loadManagedItems(collection);
+      status.textContent = added
+        ? `Added ${added} missing ${isTeam ? 'team member(s)' : 'hero slide(s)'}. Existing edits and deletions were preserved.`
+        : `All current ${isTeam ? 'team members' : 'hero slides'} are already in the admin list.`;
+    } catch (error) {
+      status.textContent = error.message || 'Unable to sync current site content.';
+    }
+  };
+
   const validateManagedImage = (collection, file) => {
     const status = document.getElementById(managedEditors[collection].imageStatusId);
     if (!file) return true;
@@ -522,6 +578,11 @@
       }
     });
   });
+
+  document.getElementById('syncTeamButton')
+    .addEventListener('click', () => syncCurrentSiteEntries('team'));
+  document.getElementById('syncSlidesButton')
+    .addEventListener('click', () => syncCurrentSiteEntries('slides'));
 
   document.querySelectorAll('[data-admin-target]').forEach(button => {
     button.addEventListener('click', () => {

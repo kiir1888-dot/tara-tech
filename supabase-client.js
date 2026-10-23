@@ -214,6 +214,40 @@
     await removeImage(data.image_url);
   };
 
+  const syncManagedContent = async (collection, items) => {
+    if (!['team', 'slides'].includes(collection)) {
+      throw new Error('Only team profiles and hero slides can be synced from the current website.');
+    }
+    if (!Array.isArray(items)) throw new Error('Invalid website content to sync.');
+
+    const existingItems = await listManagedContent(collection);
+    const { table, fields } = getManagedCollection(collection);
+    const key = collection === 'team' ? 'name' : 'alt_text';
+    const existingKeys = new Set(
+      existingItems.map(item => String(item[key] || '').trim().toLocaleLowerCase())
+    );
+    const missingItems = [];
+
+    items.forEach(item => {
+      const value = String(item?.[key] || '').trim();
+      const normalized = value.toLocaleLowerCase();
+      if (!normalized || existingKeys.has(normalized)) return;
+      existingKeys.add(normalized);
+      const payload = {};
+      fields.forEach(field => {
+        if (Object.hasOwn(item, field)) payload[field] = item[field];
+      });
+      if (item.image_url) payload.image_url = item.image_url;
+      if (!payload.image_url) return;
+      missingItems.push(payload);
+    });
+
+    if (!missingItems.length) return 0;
+    const { error } = await getClient().from(table).insert(missingItems);
+    if (error) throw error;
+    return missingItems.length;
+  };
+
   // ── Inquiries ────────────────────────────────────────────────────
 
   const submitInquiry = async (name, email, phone, message, eventTitle = null) => {
@@ -284,6 +318,7 @@
     listManagedContent,
     saveManagedContent,
     deleteManagedContent,
+    syncManagedContent,
         fetchInquiries,
     deleteInquiry,
     deleteAllInquiries,

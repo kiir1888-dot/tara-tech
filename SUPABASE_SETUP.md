@@ -78,7 +78,7 @@ Before launch, verify these cases:
 
 ## 6. Edit the public website
 
-After the content-management migration has run, sign in at `/admin.html` and select **Gallery**, **Team**, or **Hero slides**. You can add, edit, and delete portfolio projects and slides. Team profiles let you update the member's name, role/title, short text, and image. Uploaded images are stored in the public `website-assets` bucket and must be 5 MB or smaller.
+After the content-management migration has run, sign in at `/admin.html` and select **Gallery**, **Team**, or **Hero slides**. You can add, edit, and delete portfolio projects and slides. Team profiles let you update the member's name, role/title, short text, and image. If site team profiles or hero slides are missing from the admin list, select **Sync current site team** or **Sync current site slides** to import only the missing entries from the public site; existing edits and deletions are preserved. Uploaded images are stored in the public `website-assets` bucket and must be 5 MB or smaller.
 
 ## Frontend API
 
