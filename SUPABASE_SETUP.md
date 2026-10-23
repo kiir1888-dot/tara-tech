@@ -7,8 +7,9 @@ The project uses one Supabase schema for administrator profiles, news, events, t
 1. Create or open your Supabase project.
 2. In **SQL Editor**, open a new query.
 3. Paste and run all of `supabase-schema.sql`.
+4. Open a second query, paste and run `supabase-content-management.sql`. This adds the editable gallery and hero slides and seeds the existing gallery, slides, and team profiles.
 
-The script creates:
+The base script creates:
 
 - `profiles`, linked to `auth.users`
 - `news`
@@ -18,6 +19,8 @@ The script creates:
 - The public `website-assets` Storage bucket
 - RLS policies for public reads, public inquiry submission, and admin-only content writes
 - A trigger that creates a `profiles` row with role `user` whenever a user signs up
+
+The content-management migration adds `gallery_projects` and `hero_slides`. It also seeds the existing portfolio, hero slides, and team members if the team table does not already contain those members. Run this migration on an existing Supabase project before using the Gallery, Team, and Hero Slides editors in the admin dashboard.
 
 The bucket allows JPG, PNG, WebP, and GIF files up to 5 MB. Public image URLs are readable by anyone. Upload, replacement, and deletion require an authenticated user whose profile role is `admin`.
 
@@ -72,6 +75,10 @@ Before launch, verify these cases:
 - A normal authenticated user cannot create, update, or delete content or files.
 - An authenticated admin can manage content and images and can call `fetchInquiries()`.
 - Public users cannot change `profiles.role`.
+
+## 6. Edit the public website
+
+After the content-management migration has run, sign in at `/admin.html` and select **Gallery**, **Team**, or **Hero slides**. You can add, edit, and delete portfolio projects and slides. Team profiles let you update the member's name, role/title, short text, and image. Uploaded images are stored in the public `website-assets` bucket and must be 5 MB or smaller.
 
 ## Frontend API
 

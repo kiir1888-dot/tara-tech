@@ -19,10 +19,13 @@
     return client;
   };
 
-  const uploadImage = async (file) => {
+  const uploadImage = async (file, folder = 'news') => {
     if (!file) return null;
+    if (!['news', 'gallery', 'slides', 'team'].includes(folder)) {
+      throw new Error('Invalid image folder.');
+    }
     const supabase = getClient();
-    const fileName = `news/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+    const fileName = `${folder}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     const { data, error } = await supabase.storage
       .from(STORAGE_BUCKET)
       .upload(fileName, file, { upsert: false });
@@ -38,10 +41,16 @@
     try {
       const supabase = getClient();
       const url = new URL(imageUrl);
-      const path = url.pathname.split('/').slice(-2).join('/');
-      if (path) await supabase.storage.from(STORAGE_BUCKET).remove([path]);
-    } catch {
-      // Ignore cleanup errors
+      if (url.origin !== new URL(config.url).origin) return;
+      const marker = `/storage/v1/object/public/${STORAGE_BUCKET}/`;
+      const pathStart = url.pathname.indexOf(marker);
+      if (pathStart < 0) return;
+      const path = decodeURIComponent(url.pathname.slice(pathStart + marker.length));
+      if (!path) return;
+      const { error } = await supabase.storage.from(STORAGE_BUCKET).remove([path]);
+      if (error) console.error('Unable to remove managed image:', error);
+    } catch (error) {
+      console.error('Unable to remove managed image:', error);
     }
   };
 
@@ -133,6 +142,78 @@
     if (error) throw error;
   };
 
+  const managedCollections = {
+    gallery: { table: 'gallery_projects', folder: 'gallery', fields: ['title', 'category', 'order_index'] },
+    slides: { table: 'hero_slides', folder: 'slides', fields: ['alt_text', 'order_index'] },
+    team: { table: 'team', folder: 'team', fields: ['name', 'role', 'bio', 'order_index'] }
+  };
+
+  const getManagedCollection = collection => {
+    const definition = managedCollections[collection];
+    if (!definition) throw new Error('Unknown content collection.');
+    return definition;
+  };
+
+  const listManagedContent = async collection => {
+    const { table } = getManagedCollection(collection);
+    const { data, error } = await getClient()
+      .from(table)
+      .select('*')
+      .order('order_index', { ascending: true })
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  };
+
+  const saveManagedContent = async (collection, id, values, imageFile) => {
+    const definition = getManagedCollection(collection);
+    const supabase = getClient();
+    const payload = {};
+    definition.fields.forEach(field => {
+      if (Object.hasOwn(values, field)) payload[field] = values[field];
+    });
+
+    let existingImageUrl = '';
+    if (id) {
+      const { data: existing, error } = await supabase
+        .from(definition.table)
+        .select('image_url')
+        .eq('id', id)
+        .single();
+      if (error) throw error;
+      existingImageUrl = existing.image_url || '';
+    }
+
+    const newImageUrl = imageFile ? await uploadImage(imageFile, definition.folder) : '';
+    const imageUrl = newImageUrl || existingImageUrl;
+    if (!imageUrl) throw new Error('Choose an image before saving this item.');
+    payload.image_url = imageUrl;
+
+    const result = id
+      ? await supabase.from(definition.table).update(payload).eq('id', id).select().single()
+      : await supabase.from(definition.table).insert(payload).select().single();
+    if (result.error) {
+      if (newImageUrl) await removeImage(newImageUrl);
+      throw result.error;
+    }
+    if (newImageUrl && existingImageUrl && existingImageUrl !== newImageUrl) {
+      await removeImage(existingImageUrl);
+    }
+    return result.data;
+  };
+
+  const deleteManagedContent = async (collection, id) => {
+    const { table } = getManagedCollection(collection);
+    const { data, error } = await getClient()
+      .from(table)
+      .delete()
+      .eq('id', id)
+      .select('image_url')
+      .single();
+    if (error) throw error;
+    await removeImage(data.image_url);
+  };
+
   // ── Inquiries ────────────────────────────────────────────────────
 
   const submitInquiry = async (name, email, phone, message, eventTitle = null) => {
@@ -200,6 +281,9 @@
     createEvent,
     updateEvent,
     deleteEvent,
+    listManagedContent,
+    saveManagedContent,
+    deleteManagedContent,
         fetchInquiries,
     deleteInquiry,
     deleteAllInquiries,

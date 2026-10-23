@@ -64,9 +64,15 @@
 
     <section id="dashboardView" hidden>
       <header class="border-b border-gray-200 bg-white">
-        <div class="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5 px-5 py-4 lg:px-8"><div><p class="text-xs font-extrabold tracking-[0.16em] text-blue-600">Tara Tech</p><h1 class="mt-1 text-xl font-extrabold">News &amp; Events</h1></div><button id="signOutButton" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:border-yellow-400 hover:bg-yellow-300" type="button"><i data-lucide="log-out" class="h-4 w-4"></i> Sign out</button></div>
+        <div class="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5 px-5 py-4 lg:px-8"><div><p class="text-xs font-extrabold tracking-[0.16em] text-blue-600">Tara Tech</p><h1 class="mt-1 text-xl font-extrabold">Site Content</h1></div><button id="signOutButton" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:border-yellow-400 hover:bg-yellow-300" type="button"><i data-lucide="log-out" class="h-4 w-4"></i> Sign out</button></div>
       </header>
-      <div class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.2fr_.8fr] lg:px-8">
+      <nav class="mx-auto flex max-w-7xl flex-wrap gap-2 px-5 pt-6 lg:px-8" aria-label="Content editors">
+        <button class="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-bold text-white" type="button" data-admin-target="adminSectionPosts" aria-pressed="true">News &amp; Events</button>
+        <button class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button" data-admin-target="adminSectionGallery" aria-pressed="false">Gallery</button>
+        <button class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button" data-admin-target="adminSectionTeam" aria-pressed="false">Team</button>
+        <button class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button" data-admin-target="adminSectionSlides" aria-pressed="false">Hero slides</button>
+      </nav>
+      <div id="adminSectionPosts" class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.2fr_.8fr] lg:px-8">
         <section class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8" aria-labelledby="editorTitle">
           <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-extrabold tracking-[0.14em] text-blue-600">EDITOR</p><h2 id="editorTitle" class="mt-2 text-2xl font-extrabold">Create post</h2></div><button id="newPostButton" class="hidden items-center gap-2 rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button"><i data-lucide="plus" class="h-4 w-4"></i> New</button></div>
           <form id="postForm" class="mt-7 grid gap-5 sm:grid-cols-2">
@@ -91,6 +97,48 @@
           </div>
         </aside>
       </div>
+
+      <section id="adminSectionGallery" class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.2fr_.8fr] lg:px-8" hidden>
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8">
+          <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-extrabold tracking-[0.14em] text-blue-600">PORTFOLIO</p><h2 id="galleryEditorTitle" class="mt-2 text-2xl font-extrabold">Add gallery project</h2></div><button id="newGalleryButton" class="hidden rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button">New project</button></div>
+          <form id="galleryForm" class="mt-7 grid gap-5">
+            <input id="galleryId" type="hidden">
+            <label class="text-xs font-bold text-gray-600">PROJECT NAME<input id="galleryTitle" required maxlength="160" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+            <label class="text-xs font-bold text-gray-600">CATEGORY / SHORT DESCRIPTION<input id="galleryCategory" required maxlength="160" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+            <div><label for="galleryImage" class="text-xs font-bold text-gray-600">PROJECT IMAGE</label><img id="galleryPreview" class="mt-3 h-56 w-full rounded-lg object-cover" alt="Project image preview" hidden><input id="galleryImage" class="mt-3 block w-full text-sm" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><p id="galleryImageStatus" class="mt-2 text-xs text-gray-500">JPG, PNG, WebP or GIF, up to 5 MB. Choose a file to replace the current image.</p></div>
+            <div class="flex flex-wrap items-center gap-3"><button class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700" type="submit">Save project</button><p id="galleryStatus" class="text-sm font-semibold text-blue-600" role="status"></p></div>
+          </form>
+        </div>
+        <aside class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8"><h2 class="text-2xl font-extrabold">Gallery projects</h2><div id="galleryList" class="mt-6 grid gap-3" aria-live="polite"></div></aside>
+      </section>
+
+      <section id="adminSectionTeam" class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.2fr_.8fr] lg:px-8" hidden>
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8">
+          <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-extrabold tracking-[0.14em] text-blue-600">PEOPLE</p><h2 id="teamEditorTitle" class="mt-2 text-2xl font-extrabold">Add team member</h2></div><button id="newTeamButton" class="hidden rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button">New member</button></div>
+          <form id="teamForm" class="mt-7 grid gap-5">
+            <input id="teamId" type="hidden">
+            <label class="text-xs font-bold text-gray-600">NAME<input id="teamName" required minlength="2" maxlength="120" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+            <label class="text-xs font-bold text-gray-600">TITLE / ROLE<input id="teamRole" required minlength="2" maxlength="120" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+            <label class="text-xs font-bold text-gray-600">SHORT TEXT<textarea id="teamBio" maxlength="1000" rows="3" class="mt-2 w-full resize-y rounded-lg border border-gray-300 p-4 text-sm font-medium focus:border-blue-600"></textarea></label>
+            <div><label for="teamImage" class="text-xs font-bold text-gray-600">PROFILE IMAGE</label><img id="teamPreview" class="mt-3 h-56 w-full rounded-lg object-cover" alt="Team profile image preview" hidden><input id="teamImage" class="mt-3 block w-full text-sm" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><p id="teamImageStatus" class="mt-2 text-xs text-gray-500">JPG, PNG, WebP or GIF, up to 5 MB. Choose a file to replace the current image.</p></div>
+            <div class="flex flex-wrap items-center gap-3"><button class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700" type="submit">Save team member</button><p id="teamStatus" class="text-sm font-semibold text-blue-600" role="status"></p></div>
+          </form>
+        </div>
+        <aside class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8"><h2 class="text-2xl font-extrabold">Team members</h2><div id="teamList" class="mt-6 grid gap-3" aria-live="polite"></div></aside>
+      </section>
+
+      <section id="adminSectionSlides" class="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.2fr_.8fr] lg:px-8" hidden>
+        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8">
+          <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-extrabold tracking-[0.14em] text-blue-600">HOMEPAGE</p><h2 id="slideEditorTitle" class="mt-2 text-2xl font-extrabold">Add hero slide</h2></div><button id="newSlideButton" class="hidden rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-bold hover:bg-gray-50" type="button">New slide</button></div>
+          <form id="slideForm" class="mt-7 grid gap-5">
+            <input id="slideId" type="hidden">
+            <label class="text-xs font-bold text-gray-600">IMAGE DESCRIPTION (ALT TEXT)<input id="slideAlt" required minlength="2" maxlength="240" class="mt-2 h-12 w-full rounded-lg border border-gray-300 px-4 text-sm font-medium focus:border-blue-600"></label>
+            <div><label for="slideImage" class="text-xs font-bold text-gray-600">SLIDE IMAGE</label><img id="slidePreview" class="mt-3 h-56 w-full rounded-lg object-cover" alt="Hero slide image preview" hidden><input id="slideImage" class="mt-3 block w-full text-sm" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><p id="slideImageStatus" class="mt-2 text-xs text-gray-500">JPG, PNG, WebP or GIF, up to 5 MB. Choose a file to replace the current image.</p></div>
+            <div class="flex flex-wrap items-center gap-3"><button class="rounded-lg bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700" type="submit">Save slide</button><p id="slideStatus" class="text-sm font-semibold text-blue-600" role="status"></p></div>
+          </form>
+        </div>
+        <aside class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm lg:p-8"><h2 class="text-2xl font-extrabold">Hero slides</h2><div id="slideList" class="mt-6 grid gap-3" aria-live="polite"></div></aside>
+      </section>
     </section>
   </main>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

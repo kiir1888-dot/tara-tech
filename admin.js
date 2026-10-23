@@ -35,6 +35,88 @@
   let previewUrl = '';
   let slugEdited = false;
   const recoveryRequested = window.location.hash.includes('type=recovery');
+  const managedItems = { gallery: [], team: [], slides: [] };
+  const managedPreviewUrls = { gallery: '', team: '', slides: '' };
+  const managedEditors = {
+    gallery: {
+      collection: 'gallery',
+      itemLabel: 'gallery project',
+      listId: 'galleryList',
+      statusId: 'galleryStatus',
+      formId: 'galleryForm',
+      idId: 'galleryId',
+      imageId: 'galleryImage',
+      previewId: 'galleryPreview',
+      imageStatusId: 'galleryImageStatus',
+      editorTitleId: 'galleryEditorTitle',
+      newButtonId: 'newGalleryButton',
+      addTitle: 'Add gallery project',
+      editTitle: 'Edit gallery project',
+      primary: item => item.title,
+      secondary: item => item.category,
+      values: (id, item) => ({
+        title: document.getElementById('galleryTitle').value.trim(),
+        category: document.getElementById('galleryCategory').value.trim(),
+        order_index: item?.order_index ?? managedItems.gallery.length
+      }),
+      fill: item => {
+        document.getElementById('galleryTitle').value = item.title;
+        document.getElementById('galleryCategory').value = item.category;
+      }
+    },
+    team: {
+      collection: 'team',
+      itemLabel: 'team member',
+      listId: 'teamList',
+      statusId: 'teamStatus',
+      formId: 'teamForm',
+      idId: 'teamId',
+      imageId: 'teamImage',
+      previewId: 'teamPreview',
+      imageStatusId: 'teamImageStatus',
+      editorTitleId: 'teamEditorTitle',
+      newButtonId: 'newTeamButton',
+      addTitle: 'Add team member',
+      editTitle: 'Edit team member',
+      primary: item => item.name,
+      secondary: item => `${item.role}${item.bio ? ' · ' + item.bio : ''}`,
+      values: (id, item) => ({
+        name: document.getElementById('teamName').value.trim(),
+        role: document.getElementById('teamRole').value.trim(),
+        bio: document.getElementById('teamBio').value.trim(),
+        order_index: item?.order_index ?? managedItems.team.length
+      }),
+      fill: item => {
+        document.getElementById('teamName').value = item.name;
+        document.getElementById('teamRole').value = item.role;
+        document.getElementById('teamBio').value = item.bio || '';
+      }
+    },
+    slides: {
+      collection: 'slides',
+      itemLabel: 'hero slide',
+      listId: 'slideList',
+      statusId: 'slideStatus',
+      formId: 'slideForm',
+      idId: 'slideId',
+      imageId: 'slideImage',
+      previewId: 'slidePreview',
+      imageStatusId: 'slideImageStatus',
+      editorTitleId: 'slideEditorTitle',
+      newButtonId: 'newSlideButton',
+      addTitle: 'Add hero slide',
+      editTitle: 'Edit hero slide',
+      primary: item => item.alt_text,
+      secondary: () => 'Homepage hero image',
+      values: (id, item) => ({
+        alt_text: document.getElementById('slideAlt').value.trim(),
+        order_index: item?.order_index ?? managedItems.slides.length
+      }),
+      fill: item => {
+        document.getElementById('slideAlt').value = item.alt_text;
+      }
+    }
+  };
 
   const getAdminRedirectUrl = () => {
     if (!['http:', 'https:'].includes(window.location.protocol)) return '';
@@ -104,6 +186,7 @@
     resetEditor();
     await loadPosts();
     await loadInquiries();
+    await Promise.all(Object.keys(managedEditors).map(loadManagedItems));
   };
 
   const createInquiryListItem = inquiry => {
@@ -269,6 +352,193 @@
     await loadPosts();
     await loadInquiries();
   };
+
+  const clearManagedPreview = collection => {
+    const editor = managedEditors[collection];
+    if (managedPreviewUrls[collection]) URL.revokeObjectURL(managedPreviewUrls[collection]);
+    managedPreviewUrls[collection] = '';
+    const preview = document.getElementById(editor.previewId);
+    preview.removeAttribute('src');
+    preview.hidden = true;
+    document.getElementById(editor.imageId).value = '';
+  };
+
+  const resetManagedEditor = collection => {
+    const editor = managedEditors[collection];
+    document.getElementById(editor.formId).reset();
+    document.getElementById(editor.idId).value = '';
+    document.getElementById(editor.editorTitleId).textContent = editor.addTitle;
+    document.getElementById(editor.statusId).textContent = '';
+    document.getElementById(editor.imageStatusId).textContent =
+      'JPG, PNG, WebP or GIF, up to 5 MB. Choose an image to use or replace the current one.';
+    setVisible(document.getElementById(editor.newButtonId), false);
+    clearManagedPreview(collection);
+  };
+
+  const renderManagedItems = collection => {
+    const editor = managedEditors[collection];
+    const list = document.getElementById(editor.listId);
+    const fragment = document.createDocumentFragment();
+    managedItems[collection].forEach(item => {
+      const card = document.createElement('article');
+      card.className = 'flex items-start gap-3 rounded-lg border border-gray-200 p-3';
+      const image = document.createElement('img');
+      image.className = 'h-16 w-16 shrink-0 rounded-md object-cover';
+      image.src = item.image_url;
+      image.alt = '';
+      const content = document.createElement('div');
+      content.className = 'min-w-0 flex-1';
+      const heading = document.createElement('p');
+      heading.className = 'break-words text-sm font-extrabold';
+      heading.textContent = editor.primary(item);
+      const description = document.createElement('p');
+      description.className = 'mt-1 break-words text-xs text-gray-500';
+      description.textContent = editor.secondary(item);
+      const actions = document.createElement('div');
+      actions.className = 'mt-3 flex gap-2';
+      const editButton = document.createElement('button');
+      editButton.className = 'rounded-md border border-gray-300 px-3 py-1.5 text-xs font-bold hover:bg-gray-50';
+      editButton.type = 'button';
+      editButton.textContent = 'Edit';
+      editButton.addEventListener('click', () => editManagedItem(collection, item.id));
+      const deleteButton = document.createElement('button');
+      deleteButton.className = 'rounded-md border border-red-200 px-3 py-1.5 text-xs font-bold text-red-700 hover:bg-red-50';
+      deleteButton.type = 'button';
+      deleteButton.textContent = 'Delete';
+      deleteButton.addEventListener('click', () => deleteManagedItem(collection, item));
+      actions.append(editButton, deleteButton);
+      content.append(heading, description, actions);
+      card.append(image, content);
+      fragment.append(card);
+    });
+    if (!managedItems[collection].length) {
+      const empty = document.createElement('p');
+      empty.className = 'rounded-lg border border-dashed border-gray-300 p-5 text-sm text-gray-500';
+      empty.textContent = `No ${editor.itemLabel}s yet.`;
+      fragment.append(empty);
+    }
+    list.replaceChildren(fragment);
+  };
+
+  const loadManagedItems = async collection => {
+    const editor = managedEditors[collection];
+    const status = document.getElementById(editor.statusId);
+    status.textContent = 'Loading...';
+    try {
+      managedItems[collection] = await api.listManagedContent(editor.collection);
+      renderManagedItems(collection);
+      status.textContent = '';
+    } catch (error) {
+      status.textContent = `${error.message || 'Unable to load items.'} Run supabase-content-management.sql in Supabase, then refresh.`;
+    }
+  };
+
+  const editManagedItem = (collection, id) => {
+    const editor = managedEditors[collection];
+    const item = managedItems[collection].find(candidate => candidate.id === id);
+    if (!item) return;
+    resetManagedEditor(collection);
+    document.getElementById(editor.idId).value = item.id;
+    document.getElementById(editor.editorTitleId).textContent = editor.editTitle;
+    editor.fill(item);
+    const preview = document.getElementById(editor.previewId);
+    if (item.image_url) {
+      preview.src = item.image_url;
+      preview.hidden = false;
+      document.getElementById(editor.imageStatusId).textContent = 'Current image. Choose another image to replace it.';
+    }
+    setVisible(document.getElementById(editor.newButtonId), true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const deleteManagedItem = async (collection, item) => {
+    const editor = managedEditors[collection];
+    if (!window.confirm(`Delete "${editor.primary(item)}"? This cannot be undone.`)) return;
+    const status = document.getElementById(editor.statusId);
+    status.textContent = `Deleting ${editor.itemLabel}...`;
+    try {
+      await api.deleteManagedContent(editor.collection, item.id);
+      if (document.getElementById(editor.idId).value === item.id) resetManagedEditor(collection);
+      await loadManagedItems(collection);
+    } catch (error) {
+      status.textContent = error.message || `Unable to delete ${editor.itemLabel}.`;
+    }
+  };
+
+  const validateManagedImage = (collection, file) => {
+    const status = document.getElementById(managedEditors[collection].imageStatusId);
+    if (!file) return true;
+    if (!allowedImageTypes.has(file.type)) {
+      status.textContent = 'Choose a JPG, PNG, WebP or GIF image.';
+      return false;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      status.textContent = 'Choose an image smaller than 5 MB.';
+      return false;
+    }
+    return true;
+  };
+
+  Object.entries(managedEditors).forEach(([collection, editor]) => {
+    const form = document.getElementById(editor.formId);
+    const imageInput = document.getElementById(editor.imageId);
+    const imagePreview = document.getElementById(editor.previewId);
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (!validateManagedImage(collection, file)) {
+        imageInput.value = '';
+        return;
+      }
+      if (managedPreviewUrls[collection]) URL.revokeObjectURL(managedPreviewUrls[collection]);
+      managedPreviewUrls[collection] = file ? URL.createObjectURL(file) : '';
+      imagePreview.src = managedPreviewUrls[collection];
+      imagePreview.hidden = !file;
+      document.getElementById(editor.imageStatusId).textContent = file
+        ? `${file.name} selected.`
+        : 'Current image. Choose another image to replace it.';
+    });
+
+    document.getElementById(editor.newButtonId).addEventListener('click', () => resetManagedEditor(collection));
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+      const file = imageInput.files[0];
+      const id = document.getElementById(editor.idId).value;
+      const status = document.getElementById(editor.statusId);
+      if (!validateManagedImage(collection, file)) return;
+      if (!id && !file) {
+        status.textContent = 'Choose an image before saving.';
+        return;
+      }
+      status.textContent = `Saving ${editor.itemLabel}...`;
+      try {
+        const existing = managedItems[collection].find(item => item.id === id);
+        await api.saveManagedContent(editor.collection, id, editor.values(id, existing), file);
+        resetManagedEditor(collection);
+        status.textContent = `${editor.itemLabel[0].toUpperCase()}${editor.itemLabel.slice(1)} saved.`;
+        await loadManagedItems(collection);
+      } catch (error) {
+        status.textContent = error.message || `Unable to save ${editor.itemLabel}.`;
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-admin-target]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-admin-target]').forEach(tab => {
+        const selected = tab === button;
+        tab.setAttribute('aria-pressed', String(selected));
+        tab.classList.toggle('bg-blue-600', selected);
+        tab.classList.toggle('text-white', selected);
+        tab.classList.toggle('border', !selected);
+        tab.classList.toggle('border-gray-300', !selected);
+        tab.classList.toggle('bg-white', !selected);
+      });
+      ['adminSectionPosts', 'adminSectionGallery', 'adminSectionTeam', 'adminSectionSlides'].forEach(sectionId => {
+        document.getElementById(sectionId).hidden = sectionId !== button.dataset.adminTarget;
+      });
+    });
+  });
 
   loginForm.addEventListener('submit', async event => {
     event.preventDefault();
@@ -462,7 +732,10 @@
     window.lucide?.createIcons();
   });
 
-  window.addEventListener('pagehide', clearPreviewUrl, { once: true });
+  window.addEventListener('pagehide', () => {
+    clearPreviewUrl();
+    Object.keys(managedPreviewUrls).forEach(clearManagedPreview);
+  }, { once: true });
 
   const initialize = async () => {
     window.lucide?.createIcons();
