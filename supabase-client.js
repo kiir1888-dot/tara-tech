@@ -226,13 +226,21 @@
     const existingKeys = new Set(
       existingItems.map(item => String(item[key] || '').trim().toLocaleLowerCase())
     );
+    const existingOrderIndexes = new Set(
+      existingItems
+        .map(item => item.order_index)
+        .filter(Number.isInteger)
+    );
     const missingItems = [];
 
     items.forEach(item => {
       const value = String(item?.[key] || '').trim();
       const normalized = value.toLocaleLowerCase();
-      if (!normalized || existingKeys.has(normalized)) return;
+      const orderIndex = Number.isInteger(item?.order_index) ? item.order_index : null;
+      if (!normalized || existingKeys.has(normalized)
+        || (orderIndex !== null && existingOrderIndexes.has(orderIndex))) return;
       existingKeys.add(normalized);
+      if (orderIndex !== null) existingOrderIndexes.add(orderIndex);
       const payload = {};
       fields.forEach(field => {
         if (Object.hasOwn(item, field)) payload[field] = item[field];
